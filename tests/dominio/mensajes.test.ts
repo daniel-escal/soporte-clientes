@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { unirMensajes, type MensajeConversacion } from '@/lib/en-directo'
+import { unirMensajes, type MensajeConversacion } from '@/dominio/mensajes'
 
 const mensaje = (id: string, creado_en: string, contenido = id): MensajeConversacion => ({ id, autor: 'cliente', contenido, creado_en })
 
