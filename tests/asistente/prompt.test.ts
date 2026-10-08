@@ -32,6 +32,17 @@ describe('construirInstrucciones', () => {
     expect(instrucciones).toMatch(/arreglado/i)
   })
 
+  test('la prioridad la decide el asistente, aunque el cliente diga que es urgente, y no se la comunica', () => {
+    expect(instrucciones).toMatch(/aunque el cliente diga que es urgente/)
+    expect(instrucciones).toMatch(/No le digas la prioridad/)
+  })
+
+  test('distingue las peticiones de cambio: los clientes no modifican su web', () => {
+    expect(instrucciones).toMatch(/no pueden modificar su web/)
+    expect(instrucciones).toContain('"cambio_contenido"')
+    expect(instrucciones).toContain('"nuevo_componente"')
+  })
+
   test('sin webs ni FAQ lo dice explícitamente (no deja huecos que el modelo rellene)', () => {
     const vacio = construirInstrucciones({ webs: [], faq: [] })
     expect(vacio).toContain('(sin webs registradas)')

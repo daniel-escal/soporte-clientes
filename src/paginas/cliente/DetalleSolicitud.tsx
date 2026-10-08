@@ -2,21 +2,21 @@ import { ArrowLeft, Globe } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
-import { InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
+import { EtiquetaTipo, InsigniaEstado } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
 import { haceCuanto } from '@/lib/formato'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
 
-type Ticket = Pick<
-  Tables<'tickets'>,
-  'id' | 'numero' | 'titulo' | 'estado' | 'prioridad' | 'creado_en' | 'conversacion_id'
-> & { web: { nombre: string } | null }
+// Vista del cliente: sin prioridad (es triaje interno; docs/SPEC.md).
+type Solicitud = Pick<Tables<'tickets'>, 'id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'conversacion_id'> & {
+  web: { nombre: string } | null
+}
 type Mensaje = Pick<Tables<'mensajes'>, 'id' | 'autor' | 'contenido' | 'creado_en'>
 
-export default function DetalleIncidencia() {
+export default function DetalleSolicitud() {
   const { id } = useParams()
-  const [ticket, setTicket] = useState<Ticket | null>(null)
+  const [solicitud, setSolicitud] = useState<Solicitud | null>(null)
   const [mensajes, setMensajes] = useState<Mensaje[]>([])
   const [estado, setEstado] = useState<'cargando' | 'listo' | 'no-encontrada' | 'error'>('cargando')
 
@@ -24,12 +24,12 @@ export default function DetalleIncidencia() {
     async function cargar() {
       const { data, error } = await supabase
         .from('tickets')
-        .select('id, numero, titulo, estado, prioridad, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
+        .select('id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
         .eq('id', id!)
         .maybeSingle()
       if (error) return setEstado('error')
       if (!data) return setEstado('no-encontrada')
-      setTicket(data)
+      setSolicitud(data)
       if (data.conversacion_id) {
         const respuesta = await supabase
           .from('mensajes')
@@ -52,33 +52,32 @@ export default function DetalleIncidencia() {
 
       <main className="mx-auto max-w-3xl px-4 pt-2 pb-16 sm:px-6">
         <Link to="/portal" className="inline-flex min-h-11 items-center gap-1.5 text-sm text-texto-suave hover:text-texto">
-          <ArrowLeft aria-hidden className="size-4" /> Tus incidencias
+          <ArrowLeft aria-hidden className="size-4" /> Volver a tu espacio
         </Link>
 
-        {estado === 'cargando' && <div aria-busy="true" aria-label="Cargando la incidencia" className="mt-4 h-40 animate-pulse rounded-lg border bg-card" />}
+        {estado === 'cargando' && <div aria-busy="true" aria-label="Cargando la solicitud" className="mt-4 h-40 animate-pulse rounded-lg border bg-card" />}
 
         {estado === 'no-encontrada' && (
-          <p className="mt-6 text-texto-suave">No hemos encontrado esta incidencia. Puede que el enlace no sea correcto.</p>
+          <p className="mt-6 text-texto-suave">No hemos encontrado esta solicitud. Puede que el enlace no sea correcto.</p>
         )}
 
         {estado === 'error' && (
           <p role="alert" className="mt-6 text-[var(--prioridad-urgente)]">
-            No hemos podido cargar la incidencia. Prueba a recargar la página.
+            No hemos podido cargar la solicitud. Prueba a recargar la página.
           </p>
         )}
 
-        {estado === 'listo' && ticket && (
+        {estado === 'listo' && solicitud && (
           <article className="mt-4">
-            <p className="cifras text-xs text-texto-tenue">
-              Incidencia #{ticket.numero} · abierta {haceCuanto(ticket.creado_en)}
+            <p className="flex flex-wrap items-center gap-x-1 text-xs text-texto-tenue">
+              <EtiquetaTipo tipo={solicitud.tipo} numero={solicitud.numero} /> · abierta {haceCuanto(solicitud.creado_en)}
             </p>
-            <h1 className="mt-1 text-2xl font-semibold text-balance text-texto">{ticket.titulo}</h1>
+            <h1 className="mt-1 text-2xl font-semibold text-balance text-texto">{solicitud.titulo}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <InsigniaEstado estado={ticket.estado} />
-              <InsigniaPrioridad prioridad={ticket.prioridad} />
-              {ticket.web && (
+              <InsigniaEstado estado={solicitud.estado} />
+              {solicitud.web && (
                 <span className="flex items-center gap-1.5 text-xs text-texto-suave">
-                  <Globe aria-hidden className="size-3.5" /> {ticket.web.nombre}
+                  <Globe aria-hidden className="size-3.5" /> {solicitud.web.nombre}
                 </span>
               )}
             </div>
@@ -100,4 +99,3 @@ export default function DetalleIncidencia() {
     </div>
   )
 }
-

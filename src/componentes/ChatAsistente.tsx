@@ -1,7 +1,7 @@
 import { Headset, SendHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { BurbujaMensaje, type MensajeChat } from '@/componentes/BurbujaMensaje'
-import { FormularioIncidencia } from '@/componentes/FormularioIncidencia'
+import { FormularioSolicitud } from '@/componentes/FormularioSolicitud'
 import { OrbeAsistente } from '@/componentes/OrbeAsistente'
 import { TarjetaTicketCreado } from '@/componentes/TarjetaTicketCreado'
 import { Button } from '@/componentes/ui/button'
@@ -19,19 +19,19 @@ const SALUDO: MensajeChat = {
   id: 'saludo',
   autor: 'ia',
   contenido:
-    'Hola, soy el asistente de soporte de Daniel (una IA). Cuéntame qué le pasa a tu web: si puedo, te ayudo al momento y, si no, le paso a Daniel todo lo que me cuentes.',
+    'Hola, soy el asistente de soporte de Daniel (una IA). Cuéntame qué le pasa a tu web o qué quieres cambiar: si puedo, te ayudo al momento y, si no, le paso a Daniel todo lo que me cuentes.',
 }
 
-const SUGERENCIAS = ['El formulario de contacto no envía', 'Mi web no carga', 'Quiero cambiar el horario de mi web']
+const SUGERENCIAS = ['El formulario de contacto no envía', 'Mi web no carga', 'Quiero cambiar el horario', 'Quiero añadir una galería de fotos']
 
 type Props = {
   usuarioId: string
   webs: Pick<Tables<'webs'>, 'id' | 'nombre'>[]
   /** Para que la incidencia aparezca en la lista del portal sin recargar. */
-  onIncidenciaCreada: (ticket: TicketCreado) => void
+  onSolicitudCreada: (ticket: TicketCreado) => void
 }
 
-export function ChatAsistente({ usuarioId, webs, onIncidenciaCreada }: Props) {
+export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
   const [entradas, setEntradas] = useState<Entrada[]>([])
   const [conversacionId, setConversacionId] = useState<string | null>(null)
   const [texto, setTexto] = useState('')
@@ -100,7 +100,7 @@ export function ChatAsistente({ usuarioId, webs, onIncidenciaCreada }: Props) {
       ...(ticket ? [{ tipo: 'ticket' as const, id: `ticket-${ticket.id}`, ticket }] : []),
     ])
     if (ticket) {
-      onIncidenciaCreada(ticket)
+      onSolicitudCreada(ticket)
       // La conversación queda escalada: lo siguiente que escriba empieza otra.
       recordarConversacion(null)
     } else {
@@ -112,7 +112,7 @@ export function ChatAsistente({ usuarioId, webs, onIncidenciaCreada }: Props) {
   function alCrearAMano(ticket: Tables<'tickets'>) {
     setFallo(null)
     setEntradas((actuales) => [...actuales, { tipo: 'ticket', id: `ticket-${ticket.id}`, ticket }])
-    onIncidenciaCreada(ticket)
+    onSolicitudCreada(ticket)
     recordarConversacion(null)
   }
 
@@ -139,7 +139,7 @@ export function ChatAsistente({ usuarioId, webs, onIncidenciaCreada }: Props) {
           <h2 id="titulo-asistente" className="text-lg font-semibold text-texto">
             Asistente de soporte
           </h2>
-          <p className="text-sm text-texto-suave">Te responde al momento. Si no puede resolverlo, abre la incidencia por ti.</p>
+          <p className="text-sm text-texto-suave">Te responde al momento y, si hace falta, se lo pasa a Daniel con todo lo que le cuentes.</p>
         </div>
       </header>
 
@@ -196,10 +196,10 @@ export function ChatAsistente({ usuarioId, webs, onIncidenciaCreada }: Props) {
           className="mx-4 mb-4 grid justify-items-start gap-3 rounded-lg border border-[color-mix(in_srgb,var(--prioridad-urgente)_45%,transparent)] p-4 sm:mx-5"
         >
           <p className="text-sm text-texto">{fallo}</p>
-          <FormularioIncidencia
+          <FormularioSolicitud
             webs={webs}
             onCreada={alCrearAMano}
-            textoBoton="Abrir la incidencia a mano"
+            textoBoton="Rellenar el formulario"
             varianteBoton="outline"
             inicial={borradorIncidencia(loQueHaContado(entradas))}
           />

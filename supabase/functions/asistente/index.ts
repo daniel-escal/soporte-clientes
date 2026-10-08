@@ -200,7 +200,7 @@ Deno.serve(async (peticion) => {
         prioridad: propuesta.prioridad,
         origen: 'ia',
       })
-      .select('id, numero, titulo, estado, prioridad, creado_en, web_id')
+      .select('id, numero, titulo, tipo, estado, prioridad, creado_en, web_id')
       .single()
     if (error || !data) {
       console.error(JSON.stringify({ evento: 'ticket_fallo', detalle: error?.message ?? '', ...registro }))

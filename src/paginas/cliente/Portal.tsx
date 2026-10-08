@@ -2,8 +2,8 @@ import { Globe, LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ChatAsistente } from '@/componentes/ChatAsistente'
-import { FormularioIncidencia } from '@/componentes/FormularioIncidencia'
-import { COLUMNAS_INCIDENCIA, ListaIncidencias, type FilaIncidencia } from '@/componentes/ListaIncidencias'
+import { FormularioSolicitud } from '@/componentes/FormularioSolicitud'
+import { COLUMNAS_SOLICITUD, ListaSolicitudes, type FilaSolicitud } from '@/componentes/ListaSolicitudes'
 import { Marca } from '@/componentes/Marca'
 import { Button } from '@/componentes/ui/button'
 import { guardarConversacion } from '@/lib/asistente'
@@ -12,34 +12,34 @@ import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
 
 type Web = Pick<Tables<'webs'>, 'id' | 'nombre' | 'dominio'>
-type IncidenciaNueva = Pick<Tables<'tickets'>, 'id' | 'numero' | 'titulo' | 'estado' | 'prioridad' | 'creado_en' | 'web_id'>
+type SolicitudNueva = Pick<Tables<'tickets'>, 'id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'web_id'>
 
 export default function Portal() {
   const navigate = useNavigate()
   const { sesion } = useSesion()
   const [webs, setWebs] = useState<Web[] | null>(null)
-  const [incidencias, setIncidencias] = useState<FilaIncidencia[] | null>(null)
+  const [solicitudes, setSolicitudes] = useState<FilaSolicitud[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
       supabase.from('webs').select('id, nombre, dominio').order('nombre'),
-      supabase.from('tickets').select(COLUMNAS_INCIDENCIA).order('creado_en', { ascending: false }),
-    ]).then(([respuestaWebs, respuestaIncidencias]) => {
-      if (respuestaWebs.error || respuestaIncidencias.error) {
+      supabase.from('tickets').select(COLUMNAS_SOLICITUD).order('creado_en', { ascending: false }),
+    ]).then(([respuestaWebs, respuestaSolicitudes]) => {
+      if (respuestaWebs.error || respuestaSolicitudes.error) {
         setError('No hemos podido cargar tus datos. Prueba a recargar la página.')
         return
       }
       setWebs(respuestaWebs.data)
-      setIncidencias(respuestaIncidencias.data)
+      setSolicitudes(respuestaSolicitudes.data)
     })
   }, [])
 
-  // Incidencias nuevas (del asistente o a mano): arriba de la lista, sin recargar.
-  function alCrear(ticket: IncidenciaNueva) {
+  // Solicitudes nuevas (del asistente o del formulario): arriba de la lista, sin recargar.
+  function alCrear(ticket: SolicitudNueva) {
     const web = webs?.find((w) => w.id === ticket.web_id)
-    const fila: FilaIncidencia = { ...ticket, web: web ? { nombre: web.nombre } : null }
-    setIncidencias((actuales) => [fila, ...(actuales ?? []).filter((incidencia) => incidencia.id !== ticket.id)])
+    const fila: FilaSolicitud = { ...ticket, web: web ? { nombre: web.nombre } : null }
+    setSolicitudes((actuales) => [fila, ...(actuales ?? []).filter((solicitud) => solicitud.id !== ticket.id)])
   }
 
   async function salir() {
@@ -48,7 +48,7 @@ export default function Portal() {
     navigate('/', { replace: true })
   }
 
-  const cargando = !error && (webs === null || incidencias === null)
+  const cargando = !error && (webs === null || solicitudes === null)
 
   return (
     <div className="min-h-svh">
@@ -62,7 +62,9 @@ export default function Portal() {
 
       <main className="mx-auto max-w-5xl px-4 pt-4 pb-16 sm:px-6">
         <h1 className="text-2xl font-semibold text-texto sm:text-3xl">Tu espacio de soporte</h1>
-        <p className="mt-2 max-w-2xl text-base text-texto-suave">Cuéntanos qué le pasa a tu web y sigue aquí tus incidencias.</p>
+        <p className="mt-2 max-w-2xl text-base text-texto-suave">
+          Cuéntanos qué le pasa a tu web o qué quieres cambiar, y sigue aquí cómo va.
+        </p>
 
         {error && (
           <p role="alert" className="mt-6 text-[var(--prioridad-urgente)]">
@@ -79,25 +81,25 @@ export default function Portal() {
           </div>
         )}
 
-        {webs && incidencias && (
+        {webs && solicitudes && (
           <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-10">
-              {sesion && <ChatAsistente usuarioId={sesion.user.id} webs={webs} onIncidenciaCreada={alCrear} />}
+              {sesion && <ChatAsistente usuarioId={sesion.user.id} webs={webs} onSolicitudCreada={alCrear} />}
 
-              <section aria-labelledby="titulo-incidencias">
+              <section aria-labelledby="titulo-solicitudes">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 id="titulo-incidencias" className="text-lg font-semibold text-texto">
-                    Tus incidencias
+                  <h2 id="titulo-solicitudes" className="text-lg font-semibold text-texto">
+                    Tus incidencias y peticiones
                   </h2>
-                  <FormularioIncidencia webs={webs} onCreada={alCrear} varianteBoton="outline" />
+                  <FormularioSolicitud webs={webs} onCreada={alCrear} varianteBoton="outline" />
                 </div>
                 <div className="mt-4">
-                  {incidencias.length === 0 ? (
+                  {solicitudes.length === 0 ? (
                     <p className="rounded-lg border border-dashed p-6 text-texto-suave">
-                      No tienes incidencias. Si algo no va bien en tu web, cuéntaselo al asistente.
+                      Aún no tienes incidencias ni peticiones. Si algo no va bien o quieres un cambio, cuéntaselo al asistente.
                     </p>
                   ) : (
-                    <ListaIncidencias incidencias={incidencias} />
+                    <ListaSolicitudes solicitudes={solicitudes} />
                   )}
                 </div>
               </section>

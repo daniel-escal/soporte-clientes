@@ -187,6 +187,7 @@ export type Database = {
           primera_respuesta_en: string | null
           prioridad: Database["public"]["Enums"]["prioridad"]
           resumen_ia: string | null
+          tipo: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
           web_id: string | null
         }
@@ -204,6 +205,7 @@ export type Database = {
           primera_respuesta_en?: string | null
           prioridad?: Database["public"]["Enums"]["prioridad"]
           resumen_ia?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
           web_id?: string | null
         }
@@ -221,6 +223,7 @@ export type Database = {
           primera_respuesta_en?: string | null
           prioridad?: Database["public"]["Enums"]["prioridad"]
           resumen_ia?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_ticket"]
           titulo?: string
           web_id?: string | null
         }
@@ -306,6 +309,39 @@ export type Database = {
           primera_respuesta_en: string | null
           prioridad: Database["public"]["Enums"]["prioridad"]
           resumen_ia: string | null
+          tipo: Database["public"]["Enums"]["tipo_ticket"]
+          titulo: string
+          web_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "tickets"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      abrir_solicitud: {
+        Args: {
+          p_categoria?: Database["public"]["Enums"]["categoria"]
+          p_descripcion: string
+          p_titulo: string
+          p_web_id?: string
+        }
+        Returns: {
+          actualizado_en: string
+          categoria: Database["public"]["Enums"]["categoria"]
+          cliente_id: string
+          conversacion_id: string | null
+          creado_en: string
+          descripcion: string
+          estado: Database["public"]["Enums"]["estado_ticket"]
+          id: string
+          numero: number
+          origen: Database["public"]["Enums"]["origen_ticket"]
+          primera_respuesta_en: string | null
+          prioridad: Database["public"]["Enums"]["prioridad"]
+          resumen_ia: string | null
+          tipo: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
           web_id: string | null
         }
@@ -323,6 +359,7 @@ export type Database = {
         | "web_caida"
         | "error_funcional"
         | "cambio_contenido"
+        | "nuevo_componente"
         | "correo"
         | "dominio_hosting"
         | "facturacion"
@@ -337,6 +374,7 @@ export type Database = {
       origen_ticket: "ia" | "cliente"
       prioridad: "baja" | "media" | "alta" | "urgente"
       rol: "cliente" | "admin"
+      tipo_ticket: "incidencia" | "peticion"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -469,6 +507,7 @@ export const Constants = {
         "web_caida",
         "error_funcional",
         "cambio_contenido",
+        "nuevo_componente",
         "correo",
         "dominio_hosting",
         "facturacion",
@@ -485,6 +524,7 @@ export const Constants = {
       origen_ticket: ["ia", "cliente"],
       prioridad: ["baja", "media", "alta", "urgente"],
       rol: ["cliente", "admin"],
+      tipo_ticket: ["incidencia", "peticion"],
     },
   },
 } as const

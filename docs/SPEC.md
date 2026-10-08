@@ -30,12 +30,14 @@ Construir, antes del martes 13, una aplicación web en la que:
 - Como cliente, entro sin rellenar formularios (en la demo) y veo mis webs.
 - Como cliente, explico mi problema en un chat y recibo una respuesta útil en segundos.
 - Como cliente, si la IA no puede resolverlo, se abre una incidencia sin que tenga que repetir nada.
-- Como cliente, consulto mis incidencias, su estado y las respuestas de Daniel, que me llegan sin recargar.
+- Como cliente, pido cambios en mi web (actualizar textos, fotos, precios u horarios, o añadir algo nuevo) sin tocarla yo: los clientes no modifican sus webs, los cambios los hace Daniel. *(Añadido el 2026-10-09.)*
+- Como cliente, consulto mis incidencias y peticiones, su estado y las respuestas de Daniel, que me llegan sin recargar.
 - Como cliente, puedo pedir hablar con una persona en cualquier momento.
+- Como cliente, no elijo la urgencia: para un cliente cualquier fallo de su web parece urgente, así que la decide el asistente con criterios fijos y Daniel la puede corregir. *(Añadido el 2026-10-09.)*
 
 **Daniel (administrador)**
-- Como administrador, veo en una bandeja todas las incidencias, ordenadas por prioridad, y las nuevas aparecen solas.
-- Como administrador, filtro por estado, prioridad y cliente.
+- Como administrador, veo en una bandeja todas las incidencias y peticiones, ordenadas por prioridad, y las nuevas aparecen solas.
+- Como administrador, filtro por tipo (incidencia o petición), estado, prioridad y cliente.
 - Como administrador, abro una incidencia, leo la conversación con la IA y el resumen que hizo, cambio el estado o la prioridad y respondo.
 - Como administrador, edito la base de conocimiento (preguntas frecuentes) de la que tira la IA.
 - Como administrador, veo métricas: abiertas, urgentes, % de consultas resueltas por la IA y tiempo hasta la primera respuesta.
@@ -85,8 +87,9 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   | --- | --- |
   | `cliente_id`, `web_id` | Cliente y web afectada (`web_id` opcional) |
   | `titulo`, `descripcion`, `resumen_ia` | Texto de la incidencia y resumen de la IA |
-  | `categoria` | `web_caida` · `error_funcional` · `cambio_contenido` · `correo` · `dominio_hosting` · `facturacion` · `otro` |
-  | `prioridad` | `baja` · `media` · `alta` · `urgente` |
+  | `categoria` | `web_caida` · `error_funcional` · `cambio_contenido` · `nuevo_componente` · `correo` · `dominio_hosting` · `facturacion` · `otro` |
+  | `tipo` | `incidencia` · `peticion`. Columna generada a partir de la categoría: `cambio_contenido` y `nuevo_componente` son peticiones y el resto, incidencias. Así nunca pueden contradecirse |
+  | `prioridad` | `baja` · `media` · `alta` · `urgente`. La decide la IA (o Daniel), nunca el cliente; ver más abajo |
   | `estado` | `abierto` · `en_curso` · `esperando_cliente` · `resuelto` · `cerrado` |
   | `origen` | `ia` · `cliente` |
   | `conversacion_id` | Conversación de la que nace |
@@ -99,11 +102,21 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - `esperando_cliente` → `en_curso` | `resuelto`
   - `resuelto` → `cerrado` | `en_curso`
   - `cerrado` → (ninguno)
+- **Peticiones** (2026-10-09): los clientes no pueden modificar sus webs, así que piden los cambios aquí.
+  - `cambio_contenido`: actualizar lo que ya existe (textos, fotos, precios, horarios, datos de contacto).
+  - `nuevo_componente`: añadir algo nuevo (una sección, una galería, reservas, un formulario…).
+  - Siguen el mismo ciclo de estados que las incidencias, se ven en la misma bandeja y comparten la numeración.
+- **Prioridad** (2026-10-09):
+  - En el chat la decide la IA con los criterios del prompt, aunque el cliente diga que es urgente.
+  - Lo que el cliente abre a mano entra con una prioridad fija: `media` si es una incidencia y `baja` si es una petición. Daniel la reclasifica desde el panel.
+  - El formulario no pide la urgencia, y además RLS rechaza cualquier otra prioridad aunque se envíe a mano contra la API.
+  - El cliente no ve la prioridad: es un dato interno de triaje y un "baja" visible solo genera fricción. Ve el tipo y el estado.
 - Criterios de aceptación:
-  - [ ] El cliente ve la lista y el detalle de **sus** incidencias, con la conversación completa.
+  - [ ] El cliente ve la lista y el detalle de **sus** incidencias y peticiones, con la conversación completa.
   - [ ] Solo el administrador cambia el estado o la prioridad, y solo con transiciones válidas.
   - [ ] Una respuesta del administrador llega al cliente sin recargar.
-  - [ ] El cliente puede abrir una incidencia a mano si la IA no está disponible (plan B).
+  - [ ] El cliente puede abrir una incidencia o una petición a mano si la IA no está disponible (plan B).
+  - [ ] El cliente no puede fijar la prioridad ni por el formulario ni contra la API (test de RLS).
 
 ### `asistente`
 
@@ -127,6 +140,8 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - Responde con la FAQ. Si la respuesta no está ahí, no se la inventa.
   - Nunca promete plazos ni precios que no estén en la FAQ, y nunca dice que ya ha arreglado algo.
   - Abre un ticket si el problema no está en la FAQ, si el cliente pide una persona o si hay señales de urgencia (web caída, pagos, seguridad), con la prioridad que corresponda.
+  - Si el cliente pide un cambio, abre una petición (`cambio_contenido` o `nuevo_componente`). Suele tener prioridad baja, salvo que haya un dato equivocado que le haga perder clientes (un teléfono, un precio o un horario erróneos): entonces es alta.
+  - La prioridad la decide él con esos criterios, aunque el cliente diga que es urgente, y no se la comunica al cliente.
   - Si falta un dato imprescindible (qué web, qué pasa exactamente), lo pide antes de abrir el ticket (`pedir_dato`).
 - **El ticket de la IA lo crea el servidor, pero nunca con datos que decida el modelo** (cambiado en la T6):
   - La idea inicial era crearlo con la sesión del usuario. No encaja con RLS: el cliente solo puede abrir tickets con `origen = 'cliente'`, y relajar esa política dejaría que cualquiera se hiciera pasar por la IA.

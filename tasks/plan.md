@@ -67,6 +67,7 @@ T13 Guion y ensayo de la demo                       ← T12
 ### Fase 2: Asistente (viernes 9 – sábado 10)
 - [x] T6: Asistente: Edge Function con Gemini, chat con el orbe (responder y pedir dato)
 - [ ] T7: Asistente: escalar a ticket, FAQ inicial, límites de uso y plan B (adelantado en la T6; falta `resuelta_ia`)
+- [x] T7b: Peticiones de cambio y prioridad decidida por la IA (añadida el 09/10 a petición de Daniel)
 - [ ] T8: Evaluación de la IA: 10 conversaciones + 3 ataques
 
 ### Checkpoint 2: la IA funciona

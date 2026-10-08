@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { RutaProtegida } from '@/componentes/RutaProtegida'
 import { ProveedorSesion } from '@/lib/sesion'
-import DetalleIncidencia from '@/paginas/cliente/DetalleIncidencia'
+import DetalleSolicitud from '@/paginas/cliente/DetalleSolicitud'
 import Portal from '@/paginas/cliente/Portal'
 import Entrada from '@/paginas/Entrada'
 import NoEncontrada from '@/paginas/NoEncontrada'
@@ -16,7 +16,7 @@ const router = createBrowserRouter(
       element: <RutaProtegida />,
       children: [
         { path: '/portal', element: <Portal /> },
-        { path: '/portal/incidencias/:id', element: <DetalleIncidencia /> },
+        { path: '/portal/solicitudes/:id', element: <DetalleSolicitud /> },
       ],
     },
     { path: '*', element: <NoEncontrada /> },

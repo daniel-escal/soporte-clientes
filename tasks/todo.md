@@ -156,6 +156,19 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 **Files:** `supabase/functions/asistente/index.ts`, `supabase/migrations/…_faq_inicial.sql`, `src/paginas/cliente/Chat.tsx`, `src/componentes/TarjetaTicketCreado.tsx`
 **Scope:** M
 
+### Task 7b: Peticiones de cambio y prioridad decidida por la IA (añadida el 2026-10-09)
+
+**Description:** Daniel pidió que los clientes puedan pedir cambios (actualizar contenido o añadir componentes), porque no modifican sus webs, y que la urgencia la decida la IA y no el cliente: "para los clientes cualquier mínima cosa de su web es una urgencia".
+
+**Acceptance criteria:**
+- [x] `tipo` (incidencia o petición) generado a partir de la categoría, con la nueva categoría `nuevo_componente`
+- [x] El formulario no pide la urgencia (incidencia → media, petición → baja) y RLS rechaza otra prioridad contra la API (`supabase/tests/rls_abrir_solicitud.sql`, 13 casos)
+- [x] La IA clasifica las peticiones y decide la prioridad aunque el cliente diga que es urgente, sin comunicársela
+- [x] El cliente ve el tipo y el estado, no la prioridad
+- [ ] Borrar el envoltorio temporal `abrir_incidencia` cuando el frontend nuevo esté publicado
+
+**Verification:** tests · SQL de RLS · flujo real en el navegador (petición por chat y por formulario)
+
 ### Task 8: Evaluación de la IA
 
 **Description:** `docs/EVALUACION-IA.md` con 10 conversaciones (entrada, resultado esperado y resultado real) y 3 ataques. Ajustar el prompt hasta cumplir.

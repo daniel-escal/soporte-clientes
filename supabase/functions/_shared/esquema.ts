@@ -6,6 +6,7 @@ export const CATEGORIAS = [
   'web_caida',
   'error_funcional',
   'cambio_contenido',
+  'nuevo_componente',
   'correo',
   'dominio_hosting',
   'facturacion',

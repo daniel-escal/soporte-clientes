@@ -6,12 +6,14 @@ import {
   CircleDot,
   Equal,
   Hourglass,
+  LifeBuoy,
+  PencilLine,
   TriangleAlert,
   Wrench,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NOMBRE_ESTADO, NOMBRE_PRIORIDAD, type Estado, type Prioridad } from '@/dominio/tickets'
+import { NOMBRE_ESTADO, NOMBRE_PRIORIDAD, NOMBRE_TIPO, type Estado, type Prioridad, type Tipo } from '@/dominio/tickets'
 
 // Texto del color del estado sobre su tinte al 16 % (contrastes comprobados en tests/tema.test.ts).
 // Siempre texto + icono: el color nunca es el único indicador.
@@ -57,4 +59,17 @@ export function InsigniaEstado({ estado, className }: { estado: Estado; classNam
 export function InsigniaPrioridad({ prioridad, className }: { prioridad: Prioridad; className?: string }) {
   const { tono, icono } = ESTILO_PRIORIDAD[prioridad]
   return <Insignia tono={tono} icono={icono} texto={`Prioridad ${NOMBRE_PRIORIDAD[prioridad].toLowerCase()}`} className={className} />
+}
+
+const ICONO_TIPO: Record<Tipo, LucideIcon> = { incidencia: LifeBuoy, peticion: PencilLine }
+
+/** "Incidencia #24" o "Petición #27": tipo y número, sin color (no es un estado). */
+export function EtiquetaTipo({ tipo, numero, className }: { tipo: Tipo; numero: number; className?: string }) {
+  const Icono = ICONO_TIPO[tipo]
+  return (
+    <span className={cn('inline-flex items-center gap-1', className)}>
+      <Icono aria-hidden className="size-3.5" />
+      {NOMBRE_TIPO[tipo]} <span className="cifras">#{numero}</span>
+    </span>
+  )
 }

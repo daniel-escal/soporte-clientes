@@ -12,6 +12,7 @@ const respuestaConTicket = {
     id: '76164763-292d-4329-983d-4a14b04aeb3c',
     numero: 23,
     titulo: 'Web caída: Brocha & Latón',
+    tipo: 'incidencia',
     estado: 'abierto',
     prioridad: 'urgente',
     creado_en: '2026-10-08T22:59:55.681712+00:00',
@@ -46,9 +47,9 @@ describe('esquemaRespuestaAsistente', () => {
 
 describe('mensajeDeFallo', () => {
   test.each(['limite_cliente', 'limite_global', 'timeout', 'esquema', 'red', 'cualquier_otro'])(
-    '"%s" siempre ofrece abrir la incidencia a mano',
+    '"%s" siempre ofrece el formulario (plan B)',
     (motivo) => {
-      expect(mensajeDeFallo(motivo)).toMatch(/a mano/)
+      expect(mensajeDeFallo(motivo)).toMatch(/formulario/)
     },
   )
 

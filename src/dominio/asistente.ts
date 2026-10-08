@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ESTADOS, PRIORIDADES } from '@/dominio/tickets'
+import { ESTADOS, PRIORIDADES, TIPOS } from '@/dominio/tickets'
 
 // Contrato de la respuesta de la Edge Function `asistente` (supabase/functions/asistente/index.ts).
 // El navegador también la valida: si algo no cuadra, el chat ofrece el plan B en vez de romperse.
@@ -8,6 +8,7 @@ const esquemaTicketCreado = z.object({
   id: z.uuid(),
   numero: z.number().int(),
   titulo: z.string(),
+  tipo: z.enum(TIPOS),
   estado: z.enum(ESTADOS),
   prioridad: z.enum(PRIORIDADES),
   creado_en: z.string(),
@@ -32,15 +33,15 @@ export const esquemaRespuestaAsistente = z.discriminatedUnion('ok', [
 ])
 export type RespuestaAsistente = z.infer<typeof esquemaRespuestaAsistente>
 
-/** Qué decirle al cliente cuando el asistente no responde. Siempre con salida: abrirla a mano. */
+/** Qué decirle al cliente cuando el asistente no responde. Siempre con salida: el formulario. */
 export function mensajeDeFallo(motivo: string): string {
   switch (motivo) {
     case 'limite_cliente':
-      return 'Has enviado muchos mensajes en poco tiempo. Espera un rato o abre la incidencia a mano: Daniel la verá igual.'
+      return 'Has enviado muchos mensajes en poco tiempo. Espera un rato o rellena el formulario: Daniel lo verá igual.'
     case 'limite_global':
-      return 'El asistente está atendiendo a mucha gente ahora mismo. Abre la incidencia a mano y Daniel la verá igual.'
+      return 'El asistente está atendiendo a mucha gente ahora mismo. Rellena el formulario y Daniel lo verá igual.'
     default:
-      return 'El asistente no ha podido responder ahora mismo. Abre la incidencia a mano y Daniel la verá igual.'
+      return 'El asistente no ha podido responder ahora mismo. Rellena el formulario y Daniel lo verá igual.'
   }
 }
 

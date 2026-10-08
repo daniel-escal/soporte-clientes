@@ -6,7 +6,7 @@ export type EstadoOrbe = 'reposo' | 'pensando' | 'listo'
 const DESCRIPCION: Record<EstadoOrbe, string> = {
   reposo: 'Asistente de soporte disponible',
   pensando: 'El asistente está pensando',
-  listo: 'El asistente ha creado la incidencia',
+  listo: 'El asistente ha pasado tu solicitud a Daniel',
 }
 
 /**

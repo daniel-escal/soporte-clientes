@@ -24,6 +24,15 @@ export function siguientesEstados(de: Estado): Estado[] {
 export const PRIORIDADES = ['baja', 'media', 'alta', 'urgente'] as const
 export type Prioridad = (typeof PRIORIDADES)[number]
 
+// Incidencia (algo falla) o petición (un cambio o algo nuevo). En la BD se deriva de la categoría.
+export const TIPOS = ['incidencia', 'peticion'] as const
+export type Tipo = (typeof TIPOS)[number]
+
+export const NOMBRE_TIPO: Record<Tipo, string> = {
+  incidencia: 'Incidencia',
+  peticion: 'Petición',
+}
+
 export const NOMBRE_ESTADO: Record<Estado, string> = {
   abierto: 'Abierto',
   en_curso: 'En curso',
