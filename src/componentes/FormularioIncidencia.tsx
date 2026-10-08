@@ -32,9 +32,14 @@ const SIN_WEB = 'ninguna'
 type Props = {
   webs: Pick<Tables<'webs'>, 'id' | 'nombre'>[]
   onCreada: (ticket: Tables<'tickets'>) => void
+  textoBoton?: string
+  /** 'outline' cuando no es la acción principal de la pantalla (ESTETICA: un solo botón con degradado). */
+  varianteBoton?: 'marca' | 'outline'
+  /** Lo que el cliente ya ha contado (p. ej. en el chat), para no hacérselo repetir. */
+  inicial?: { titulo?: string; descripcion?: string }
 }
 
-export function FormularioIncidencia({ webs, onCreada }: Props) {
+export function FormularioIncidencia({ webs, onCreada, textoBoton = 'Abrir incidencia', varianteBoton = 'marca', inicial }: Props) {
   const [abierto, setAbierto] = useState(false)
   const [prioridad, setPrioridad] = useState<Prioridad>('media')
   const [web, setWeb] = useState(SIN_WEB)
@@ -98,9 +103,9 @@ export function FormularioIncidencia({ webs, onCreada }: Props) {
   return (
     <Dialog open={abierto} onOpenChange={cambiarApertura}>
       <DialogTrigger asChild>
-        <Button variant="marca" size="tactil">
+        <Button variant={varianteBoton} size="tactil">
           <Plus data-icon="inline-start" />
-          Abrir incidencia
+          {textoBoton}
         </Button>
       </DialogTrigger>
 
@@ -125,6 +130,7 @@ export function FormularioIncidencia({ webs, onCreada }: Props) {
               id="titulo"
               name="titulo"
               maxLength={140}
+              defaultValue={inicial?.titulo}
               placeholder="El formulario de contacto no envía"
               aria-invalid={Boolean(errores.titulo)}
               aria-describedby={describir('titulo')}
@@ -184,6 +190,7 @@ export function FormularioIncidencia({ webs, onCreada }: Props) {
               name="descripcion"
               rows={5}
               maxLength={4000}
+              defaultValue={inicial?.descripcion}
               placeholder="Desde cuándo pasa, en qué página, si ves algún mensaje de error…"
               aria-invalid={Boolean(errores.descripcion)}
               aria-describedby={describir('descripcion')}

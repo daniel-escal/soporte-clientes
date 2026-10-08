@@ -128,7 +128,14 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - Nunca promete plazos ni precios que no estén en la FAQ, y nunca dice que ya ha arreglado algo.
   - Abre un ticket si el problema no está en la FAQ, si el cliente pide una persona o si hay señales de urgencia (web caída, pagos, seguridad), con la prioridad que corresponda.
   - Si falta un dato imprescindible (qué web, qué pasa exactamente), lo pide antes de abrir el ticket (`pedir_dato`).
-- **El ticket se crea con el cliente de Supabase autenticado como el propio usuario** (no con la clave secreta). Así, aunque alguien manipule a la IA, RLS impide crear o leer nada de otro cliente.
+- **El ticket de la IA lo crea el servidor, pero nunca con datos que decida el modelo** (cambiado en la T6):
+  - La idea inicial era crearlo con la sesión del usuario. No encaja con RLS: el cliente solo puede abrir tickets con `origen = 'cliente'`, y relajar esa política dejaría que cualquiera se hiciera pasar por la IA.
+  - Por eso lo inserta la Edge Function con la clave secreta, solo con ids verificados:
+    - el cliente sale del perfil del usuario y la conversación se comprueba con su sesión;
+    - la web propuesta se descarta si no es una de las suyas;
+    - del modelo solo se toman el texto y la clasificación, validados con zod.
+  - Además, las claves foráneas compuestas (`tickets_web_del_cliente` y `tickets_conversacion_del_cliente`) impiden en la propia base de datos mezclar webs o conversaciones de otro cliente, aunque falle el código.
+  - El ticket se crea antes que el mensaje de la IA, para que nunca diga "he abierto una incidencia" si no existe. Después, la conversación pasa a `escalada`.
 - **FAQ:** tabla `faq` (`pregunta`, `respuesta`, `categoria`, `activa`) que edita el administrador.
   - En la v1 la FAQ entera va en el prompt, porque son unas 15–25 entradas.
   - Buscar por similitud con pgvector y `gemini-embedding-2` queda como mejora si sobra tiempo.

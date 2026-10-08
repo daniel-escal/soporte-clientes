@@ -4,9 +4,13 @@
 //   · La identidad sale del JWT verificado (el gateway lo exige: verify_jwt) y el cliente, de su perfil
 //     (con RLS). Nunca del cuerpo de la petición ni de lo que diga el modelo.
 //   · Lo del cliente (su mensaje, abrir conversación) se escribe con SU sesión: RLS se aplica.
-//   · Lo de la IA (autor 'ia') solo lo puede escribir el servidor. Se escribe con la clave secreta,
-//     que solo existe aquí, y únicamente tras comprobar con la sesión del usuario que la conversación es suya.
+//   · Lo de la IA (mensaje con autor 'ia', ticket con origen 'ia', conversación escalada) solo lo puede
+//     escribir el servidor, con la clave secreta que solo existe aquí, y siempre con ids verificados:
+//     el cliente y la conversación salen de la sesión del usuario, y la web se filtra contra sus webs.
+//     Además, las claves foráneas compuestas de tickets impiden en la BD mezclar webs o conversaciones
+//     de otro cliente.
 //   · La salida del modelo se valida con zod (interpretarRespuesta) y se guarda como texto.
+//   · Límites de uso por hora (la demo es pública), comprobados antes de guardar nada y de llamar a Gemini.
 //   · CORS solo para los orígenes de la app.
 import { createClient } from '@supabase/supabase-js'
 import { esquemaPeticion, interpretarRespuesta } from '../_shared/esquema.ts'
@@ -18,6 +22,10 @@ const ORIGENES_PERMITIDOS = ['https://daniel-escal.github.io', 'http://localhost
 // falla se prueba el siguiente (todos con nivel gratuito). Medido el 08/10/2026 con thinkingLevel
 // 'low': 3.6-flash respondió en ~2,3 s; 3.8-flash (el más nuevo, pensado para agentes) superó los 8 s.
 const MODELOS_POR_DEFECTO = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']
+// Límites por hora (spec): protegen la cuota gratuita de Gemini. Por cliente (en la demo, cada
+// visitante es un cliente) y un tope global para todo el servicio.
+const LIMITE_CLIENTE_POR_HORA = 30
+const LIMITE_GLOBAL_POR_HORA = 200
 
 function cabecerasCors(origen: string | null): Record<string, string> {
   return {
@@ -70,7 +78,8 @@ Deno.serve(async (peticion) => {
     ...opciones,
     global: { headers: { Authorization: `Bearer ${jwt}` } },
   })
-  // Cliente de servidor: SOLO para escribir el mensaje de la IA en una conversación ya verificada.
+  // Cliente de servidor: SOLO para lo que escribe la IA (mensaje, ticket, escalado) con ids ya verificados,
+  // y para contar el uso global.
   const servidor = createClient(url, clave('SUPABASE_SECRET_KEYS', 'SUPABASE_SERVICE_ROLE_KEY'), opciones)
 
   const { data: usuario, error: errorUsuario } = await db.auth.getUser(jwt)
@@ -86,6 +95,20 @@ Deno.serve(async (peticion) => {
 
   const { data: perfil } = await db.from('perfiles').select('cliente_id').eq('id', usuarioId).maybeSingle()
   if (!perfil?.cliente_id) return json({ ok: false, motivo: 'sin_cliente' }, 403, cors)
+
+  // Límites de uso: antes de guardar nada y de llamar a Gemini.
+  const haceUnaHora = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  const [usoCliente, usoGlobal] = await Promise.all([
+    // Con la sesión del usuario: RLS solo deja contar los mensajes de sus conversaciones.
+    db.from('mensajes').select('id', { count: 'exact', head: true }).eq('autor', 'cliente').gte('creado_en', haceUnaHora),
+    servidor.from('mensajes').select('id', { count: 'exact', head: true }).eq('autor', 'ia').gte('creado_en', haceUnaHora),
+  ])
+  if (usoCliente.error || usoGlobal.error) return json({ ok: false, motivo: 'error_interno' }, 500, cors)
+  if ((usoCliente.count ?? 0) >= LIMITE_CLIENTE_POR_HORA) return json({ ok: false, motivo: 'limite_cliente' }, 429, cors)
+  if ((usoGlobal.count ?? 0) >= LIMITE_GLOBAL_POR_HORA) {
+    console.error(JSON.stringify({ evento: 'limite_global', uso: usoGlobal.count }))
+    return json({ ok: false, motivo: 'limite_global' }, 429, cors)
+  }
 
   // Conversación: la indicada (RLS garantiza que es suya) o una nueva si no hay o ya terminó.
   let conversacionId: string | undefined
@@ -158,7 +181,37 @@ Deno.serve(async (peticion) => {
     return json({ ok: false, conversacion_id: conversacionId, motivo: interpretacion.motivo }, 200, cors)
   }
 
-  const { respuesta, accion } = interpretacion.datos
+  const { respuesta, accion, ticket: propuesta } = interpretacion.datos
+
+  // abrir_ticket: el ticket se crea antes que el mensaje de la IA, para no decir "he abierto una
+  // incidencia" si no se ha podido crear. Del modelo solo se toman el texto y la clasificación; la web
+  // ya viene filtrada contra las del cliente (interpretarRespuesta).
+  let ticket: Record<string, unknown> | null = null
+  if (accion === 'abrir_ticket' && propuesta) {
+    const { data, error } = await servidor
+      .from('tickets')
+      .insert({
+        cliente_id: perfil.cliente_id,
+        conversacion_id: conversacionId,
+        web_id: propuesta.web_id,
+        titulo: propuesta.titulo,
+        descripcion: propuesta.descripcion,
+        categoria: propuesta.categoria,
+        prioridad: propuesta.prioridad,
+        origen: 'ia',
+      })
+      .select('id, numero, titulo, estado, prioridad, creado_en, web_id')
+      .single()
+    if (error || !data) {
+      console.error(JSON.stringify({ evento: 'ticket_fallo', detalle: error?.message ?? '', ...registro }))
+      return json({ ok: false, conversacion_id: conversacionId, motivo: 'error_interno' }, 500, cors)
+    }
+    ticket = data
+    // La conversación queda escalada: el siguiente mensaje del cliente abre una nueva.
+    const { error: errorEscalar } = await servidor.from('conversaciones').update({ estado: 'escalada' }).eq('id', conversacionId)
+    if (errorEscalar) console.error(JSON.stringify({ evento: 'escalar_fallo', detalle: errorEscalar.message }))
+  }
+
   const { data: mensajeIa, error: errorIa } = await servidor
     .from('mensajes')
     .insert({ conversacion_id: conversacionId, autor: 'ia', contenido: respuesta })
@@ -166,7 +219,7 @@ Deno.serve(async (peticion) => {
     .single()
   if (errorIa || !mensajeIa) return json({ ok: false, motivo: 'error_interno' }, 500, cors)
 
-  console.log(JSON.stringify({ evento: 'ia_ok', accion, ...registro }))
+  console.log(JSON.stringify({ evento: 'ia_ok', accion, ticket: ticket?.numero ?? null, ...registro }))
   return json(
     {
       ok: true,
@@ -174,6 +227,7 @@ Deno.serve(async (peticion) => {
       accion,
       respuesta,
       mensaje: { id: mensajeIa.id, creado_en: mensajeIa.creado_en },
+      ticket,
       duracion_ms: duracionMs,
       modelo: modeloUsado,
     },

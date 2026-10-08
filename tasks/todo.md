@@ -129,9 +129,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Cerrar con la skill de seguridad cómo se escriben los mensajes de la IA, y documentarlo en la spec.
 
 **Acceptance criteria:**
-- [ ] Una pregunta que está en la FAQ recibe respuesta en ≤ 6 s
-- [ ] El prompt solo contiene datos del cliente que pregunta (test)
-- [ ] Una salida inválida del modelo no rompe nada: hay mensaje claro y enlace al plan B
+- [x] Una pregunta que está en la FAQ recibe respuesta en ≤ 6 s (2,5 s medidos el 09/10)
+- [x] El prompt solo contiene datos del cliente que pregunta (test)
+- [x] Una salida inválida del modelo no rompe nada: hay mensaje claro y enlace al plan B (verificado sin conexión en el navegador)
 
 **Verification:** `npm test` · invocación real de la función · MCP: chat en el navegador
 **Dependencies:** T5 · **Daniel:** `GEMINI_API_KEY`
@@ -147,9 +147,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Si la IA falla, el chat ofrece el formulario de la T5.
 
 **Acceptance criteria:**
-- [ ] Un problema que no está en la FAQ abre un ticket con título, resumen, categoría, prioridad y web
-- [ ] Al superar el límite, el cliente recibe un mensaje claro y no se llama a Gemini
-- [ ] La conversación queda marcada como `resuelta_ia` o `escalada`
+- [x] Un problema que no está en la FAQ abre un ticket con título, resumen, categoría, prioridad y web (adelantado en la T6)
+- [x] Al superar el límite, el cliente recibe un mensaje claro y no se llama a Gemini (`scripts/probar-limite.mjs`)
+- [ ] La conversación queda marcada como `resuelta_ia` o `escalada` (`escalada` hecho; falta `resuelta_ia`)
 
 **Verification:** `npm test` · flujo real en el MCP · consulta SQL de los datos creados
 **Dependencies:** T6

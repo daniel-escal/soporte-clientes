@@ -1,12 +1,12 @@
-import { ArrowLeft, Globe, Headset, UserRound } from 'lucide-react'
+import { ArrowLeft, Globe } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
 import { InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
 import { haceCuanto } from '@/lib/formato'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
-import { cn } from '@/lib/utils'
 
 type Ticket = Pick<
   Tables<'tickets'>,
@@ -101,22 +101,3 @@ export default function DetalleIncidencia() {
   )
 }
 
-const AUTOR = {
-  cliente: { nombre: 'Tú', icono: UserRound, clase: 'ml-auto bg-superficie-alta rounded-br-sm' },
-  ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
-  admin: { nombre: 'Daniel', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
-} as const
-
-function BurbujaMensaje({ mensaje }: { mensaje: Mensaje }) {
-  const { nombre, icono: Icono, clase } = AUTOR[mensaje.autor]
-  return (
-    <li className={cn('w-fit max-w-[85%] rounded-lg px-4 py-3', clase)}>
-      <p className="flex items-center gap-1.5 text-xs text-texto-suave">
-        <Icono aria-hidden className="size-3.5" />
-        <span className="font-medium text-texto">{nombre}</span> · {haceCuanto(mensaje.creado_en)}
-      </p>
-      {/* Texto plano siempre: nunca HTML (lo que escriben clientes o la IA no es de fiar) */}
-      <p className="mt-1.5 text-base whitespace-pre-wrap text-texto">{mensaje.contenido}</p>
-    </li>
-  )
-}

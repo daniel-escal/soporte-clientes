@@ -13,7 +13,8 @@ export const COLUMNAS_INCIDENCIA = 'id, numero, titulo, estado, prioridad, cread
 
 export function ListaIncidencias({ incidencias }: { incidencias: FilaIncidencia[] }) {
   return (
-    <ul className="grid gap-2">
+    // minmax(0, 1fr): sin él, la columna crece hasta el título más largo (truncate no parte líneas)
+    <ul className="grid grid-cols-[minmax(0,1fr)] gap-2">
       {incidencias.map((incidencia) => (
         <li key={incidencia.id}>
           <Link
