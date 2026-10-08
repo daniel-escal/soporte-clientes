@@ -1,8 +1,12 @@
 import { ArrowRight, Globe, MessageSquareText, Sparkles, TicketCheck } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import { InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
 import { OrbeAsistente } from '@/componentes/OrbeAsistente'
 import { Button } from '@/componentes/ui/button'
+import { useSesion } from '@/lib/sesion'
+import { supabase } from '@/lib/supabase'
 
 const PASOS = [
   { icono: MessageSquareText, titulo: 'Cuentas qué le pasa a tu web', texto: 'Con tus palabras, desde el móvil.' },
@@ -27,18 +31,51 @@ export default function Entrada() {
             Un asistente con IA para los clientes de daniel-escal.es: responde al momento con la base de conocimiento y, cuando hace falta una persona,
             prepara la incidencia con todo lo necesario.
           </p>
-          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            {/* Se activa en la tarea 3 (inicio de sesión anónimo de demostración) */}
-            <Button variant="marca" size="tactil" disabled>
-              Probar como cliente
-              <ArrowRight data-icon="inline-end" />
-            </Button>
-            <p className="text-sm text-texto-tenue">Demo con datos ficticios y sin registro. Disponible en breve.</p>
-          </div>
+          <AccesoDemo />
         </section>
 
         <VistaPrevia />
       </main>
+    </div>
+  )
+}
+
+/** Demo pública: cada visitante entra con una sesión anónima y recibe su propio negocio ficticio (aislado por RLS). */
+function AccesoDemo() {
+  const navigate = useNavigate()
+  const { sesion } = useSesion()
+  const [entrando, setEntrando] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function probar() {
+    if (sesion) return navigate('/portal')
+    setEntrando(true)
+    setError(null)
+    const { error } = await supabase.auth.signInAnonymously()
+    setEntrando(false)
+    if (error) {
+      setError(
+        error.code === 'anonymous_provider_disabled'
+          ? 'La demo pública está desactivada en este momento.'
+          : 'No hemos podido abrir la demo. Prueba de nuevo en unos segundos.',
+      )
+      return
+    }
+    navigate('/portal')
+  }
+
+  return (
+    <div className="mt-8">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <Button variant="marca" size="tactil" onClick={probar} disabled={entrando}>
+          {sesion ? 'Volver a mi espacio' : entrando ? 'Preparando tu demo…' : 'Probar como cliente'}
+          <ArrowRight data-icon="inline-end" />
+        </Button>
+        <p className="text-sm text-texto-tenue">Demo con datos ficticios y sin registro.</p>
+      </div>
+      <p role="alert" className="mt-3 min-h-5 text-sm text-[var(--prioridad-urgente)]">
+        {error}
+      </p>
     </div>
   )
 }

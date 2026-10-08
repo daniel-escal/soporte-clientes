@@ -56,9 +56,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - En la aplicación: cliente de Supabase, "Probar como cliente" (inicio de sesión anónimo), ruta protegida `/portal` y lista "Mis webs".
 
 **Acceptance criteria:**
-- [ ] SQL simulado: dos usuarios anónimos solo ven su cliente, su perfil y sus webs; sin sesión no se ve nada
-- [ ] Un cliente no puede cambiarse el rol a `admin` ni editar clientes o webs
-- [ ] `get_advisors` (seguridad) sin errores
+- [x] SQL simulado: dos usuarios anónimos solo ven su cliente, su perfil y sus webs; sin sesión no se ve nada
+- [x] Un cliente no puede cambiarse el rol a `admin` ni editar clientes o webs
+- [x] `get_advisors` (seguridad) sin errores
 - [ ] (Cuando Daniel active el acceso anónimo) "Probar como cliente" entra en menos de 3 s y muestra las 2 webs de ejemplo
 
 **Verification:** consultas SQL de RLS (en transacción que se deshace) · `get_advisors` · MCP: flujo en el navegador
