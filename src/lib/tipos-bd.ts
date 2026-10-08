@@ -285,7 +285,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      abrir_incidencia: {
+        Args: {
+          p_descripcion: string
+          p_prioridad?: Database["public"]["Enums"]["prioridad"]
+          p_titulo: string
+          p_web_id?: string
+        }
+        Returns: {
+          actualizado_en: string
+          categoria: Database["public"]["Enums"]["categoria"]
+          cliente_id: string
+          conversacion_id: string | null
+          creado_en: string
+          descripcion: string
+          estado: Database["public"]["Enums"]["estado_ticket"]
+          id: string
+          numero: number
+          origen: Database["public"]["Enums"]["origen_ticket"]
+          primera_respuesta_en: string | null
+          prioridad: Database["public"]["Enums"]["prioridad"]
+          resumen_ia: string | null
+          titulo: string
+          web_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "tickets"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       autor: "cliente" | "ia" | "admin"

@@ -56,8 +56,8 @@ T13 Guion y ensayo de la demo                       ← T12
 - [x] T1: Esqueleto Vite + React + Tailwind + shadcn con el tema de ESTETICA y la pantalla de entrada
 - [x] T2: Publicación continua en GitHub Pages
 - [x] T3: Identidad y webs: proyecto Supabase, RLS y "Probar como cliente"
-- [ ] T4: Incidencias: esquema, RLS y tests de aislamiento
-- [ ] T5: Incidencias del cliente: abrir a mano (plan B), lista y detalle
+- [x] T4: Incidencias: esquema, RLS y tests de aislamiento
+- [x] T5: Incidencias del cliente: abrir a mano (plan B), lista y detalle
 
 ### Checkpoint 1: base segura y visible
 - [ ] Tests, typecheck, lint y build en verde; publicado en Pages

@@ -59,7 +59,7 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - [x] SQL simulado: dos usuarios anónimos solo ven su cliente, su perfil y sus webs; sin sesión no se ve nada
 - [x] Un cliente no puede cambiarse el rol a `admin` ni editar clientes o webs
 - [x] `get_advisors` (seguridad) sin errores
-- [ ] (Cuando Daniel active el acceso anónimo) "Probar como cliente" entra en menos de 3 s y muestra las 2 webs de ejemplo
+- [x] (Cuando Daniel active el acceso anónimo) "Probar como cliente" entra en menos de 3 s y muestra las 2 webs de ejemplo
 
 **Verification:** consultas SQL de RLS (en transacción que se deshace) · `get_advisors` · MCP: flujo en el navegador
 **Dependencies:** T1
@@ -96,9 +96,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - ve el detalle con los mensajes.
 
 **Acceptance criteria:**
-- [ ] El cliente crea una incidencia y aparece en su lista sin recargar
-- [ ] El formulario valida con zod y muestra los errores junto a cada campo
-- [ ] Insignias de estado con texto e icono, no solo color
+- [x] El cliente crea una incidencia y aparece en su lista sin recargar
+- [x] El formulario valida con zod y muestra los errores junto a cada campo
+- [x] Insignias de estado con texto e icono, no solo color
 
 **Verification:** MCP: flujo completo a 375 y 1280 px, teclado y consola · `npm test`
 **Dependencies:** T4
