@@ -1,0 +1,22 @@
+# Dependencias y builds
+node_modules/
+dist/
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+
+# Referencias de diseño sin licencia conocida (solo en local)
+docs/referencias/
+
+# Supabase CLI local
+supabase/.temp/
+supabase/.branches/
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
