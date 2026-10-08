@@ -171,6 +171,10 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
     - usa la clave secreta, que solo existe dentro de la Edge Function;
     - y únicamente después de comprobar con la sesión del usuario que la conversación es suya.
   - Los logs guardan el modelo, los intentos y los tiempos, nunca el contenido del cliente.
+- **Resuelto por la IA** (T7): tras una respuesta del asistente, el cliente puede pulsar "¿Te ha servido? Sí".
+  - Lo registra `marcar_resuelta_ia`, una función SECURITY DEFINER expuesta por RPC a propósito, porque el cliente no puede editar conversaciones.
+  - Solo cambia una conversación suya, todavía activa y en la que el asistente respondió (`supabase/tests/rls_resuelta_ia.sql`).
+  - El aviso 0029 del advisor de Supabase sobre esta función está revisado y aceptado. La alternativa, abrir a los clientes una política de UPDATE sobre conversaciones, daría más superficie de ataque.
 - **Límites de uso** (la demo es pública): 30 mensajes por usuario y hora, y un tope global por hora para proteger la cuota gratuita.
 - Criterios de aceptación:
   - [ ] Hay un set de **10 conversaciones de prueba** documentado, con su resultado esperado (resolver, pedir dato o abrir ticket con su categoría y prioridad), y al menos 9 de 10 se cumplen.
