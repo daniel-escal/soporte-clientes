@@ -36,6 +36,110 @@ export type Database = {
         }
         Relationships: []
       }
+      conversaciones: {
+        Row: {
+          actualizado_en: string
+          cliente_id: string
+          creado_en: string
+          estado: Database["public"]["Enums"]["estado_conversacion"]
+          id: string
+          perfil_id: string
+        }
+        Insert: {
+          actualizado_en?: string
+          cliente_id: string
+          creado_en?: string
+          estado?: Database["public"]["Enums"]["estado_conversacion"]
+          id?: string
+          perfil_id: string
+        }
+        Update: {
+          actualizado_en?: string
+          cliente_id?: string
+          creado_en?: string
+          estado?: Database["public"]["Enums"]["estado_conversacion"]
+          id?: string
+          perfil_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversaciones_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversaciones_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faq: {
+        Row: {
+          activa: boolean
+          actualizado_en: string
+          categoria: Database["public"]["Enums"]["categoria"]
+          creado_en: string
+          id: string
+          pregunta: string
+          respuesta: string
+        }
+        Insert: {
+          activa?: boolean
+          actualizado_en?: string
+          categoria?: Database["public"]["Enums"]["categoria"]
+          creado_en?: string
+          id?: string
+          pregunta: string
+          respuesta: string
+        }
+        Update: {
+          activa?: boolean
+          actualizado_en?: string
+          categoria?: Database["public"]["Enums"]["categoria"]
+          creado_en?: string
+          id?: string
+          pregunta?: string
+          respuesta?: string
+        }
+        Relationships: []
+      }
+      mensajes: {
+        Row: {
+          autor: Database["public"]["Enums"]["autor"]
+          contenido: string
+          conversacion_id: string
+          creado_en: string
+          id: string
+        }
+        Insert: {
+          autor: Database["public"]["Enums"]["autor"]
+          contenido: string
+          conversacion_id: string
+          creado_en?: string
+          id?: string
+        }
+        Update: {
+          autor?: Database["public"]["Enums"]["autor"]
+          contenido?: string
+          conversacion_id?: string
+          creado_en?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mensajes_conversacion_id_fkey"
+            columns: ["conversacion_id"]
+            isOneToOne: false
+            referencedRelation: "conversaciones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfiles: {
         Row: {
           cliente_id: string | null
@@ -65,6 +169,82 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "clientes"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          actualizado_en: string
+          categoria: Database["public"]["Enums"]["categoria"]
+          cliente_id: string
+          conversacion_id: string | null
+          creado_en: string
+          descripcion: string
+          estado: Database["public"]["Enums"]["estado_ticket"]
+          id: string
+          numero: number
+          origen: Database["public"]["Enums"]["origen_ticket"]
+          primera_respuesta_en: string | null
+          prioridad: Database["public"]["Enums"]["prioridad"]
+          resumen_ia: string | null
+          titulo: string
+          web_id: string | null
+        }
+        Insert: {
+          actualizado_en?: string
+          categoria?: Database["public"]["Enums"]["categoria"]
+          cliente_id: string
+          conversacion_id?: string | null
+          creado_en?: string
+          descripcion: string
+          estado?: Database["public"]["Enums"]["estado_ticket"]
+          id?: string
+          numero?: never
+          origen: Database["public"]["Enums"]["origen_ticket"]
+          primera_respuesta_en?: string | null
+          prioridad?: Database["public"]["Enums"]["prioridad"]
+          resumen_ia?: string | null
+          titulo: string
+          web_id?: string | null
+        }
+        Update: {
+          actualizado_en?: string
+          categoria?: Database["public"]["Enums"]["categoria"]
+          cliente_id?: string
+          conversacion_id?: string | null
+          creado_en?: string
+          descripcion?: string
+          estado?: Database["public"]["Enums"]["estado_ticket"]
+          id?: string
+          numero?: never
+          origen?: Database["public"]["Enums"]["origen_ticket"]
+          primera_respuesta_en?: string | null
+          prioridad?: Database["public"]["Enums"]["prioridad"]
+          resumen_ia?: string | null
+          titulo?: string
+          web_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_conversacion_del_cliente"
+            columns: ["conversacion_id", "cliente_id"]
+            isOneToOne: false
+            referencedRelation: "conversaciones"
+            referencedColumns: ["id", "cliente_id"]
+          },
+          {
+            foreignKeyName: "tickets_web_del_cliente"
+            columns: ["web_id", "cliente_id"]
+            isOneToOne: false
+            referencedRelation: "webs"
+            referencedColumns: ["id", "cliente_id"]
           },
         ]
       }
@@ -108,6 +288,24 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      autor: "cliente" | "ia" | "admin"
+      categoria:
+        | "web_caida"
+        | "error_funcional"
+        | "cambio_contenido"
+        | "correo"
+        | "dominio_hosting"
+        | "facturacion"
+        | "otro"
+      estado_conversacion: "activa" | "resuelta_ia" | "escalada"
+      estado_ticket:
+        | "abierto"
+        | "en_curso"
+        | "esperando_cliente"
+        | "resuelto"
+        | "cerrado"
+      origen_ticket: "ia" | "cliente"
+      prioridad: "baja" | "media" | "alta" | "urgente"
       rol: "cliente" | "admin"
     }
     CompositeTypes: {
@@ -236,6 +434,26 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      autor: ["cliente", "ia", "admin"],
+      categoria: [
+        "web_caida",
+        "error_funcional",
+        "cambio_contenido",
+        "correo",
+        "dominio_hosting",
+        "facturacion",
+        "otro",
+      ],
+      estado_conversacion: ["activa", "resuelta_ia", "escalada"],
+      estado_ticket: [
+        "abierto",
+        "en_curso",
+        "esperando_cliente",
+        "resuelto",
+        "cerrado",
+      ],
+      origen_ticket: ["ia", "cliente"],
+      prioridad: ["baja", "media", "alta", "urgente"],
       rol: ["cliente", "admin"],
     },
   },

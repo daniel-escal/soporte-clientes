@@ -35,9 +35,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 **Description:** repositorio público `soporte-clientes` y un workflow de GitHub Actions que instala, ejecuta los tests y el build, copia `index.html` a `404.html` y publica en Pages.
 
 **Acceptance criteria:**
-- [ ] Al hacer push a `main` se publica en `https://daniel-escal.github.io/soporte-clientes/`
-- [ ] Un enlace profundo (`/soporte-clientes/portal`) abre la aplicación, no un 404 de GitHub
-- [ ] Si un test falla, no se publica
+- [x] Al hacer push a `main` se publica en `https://daniel-escal.github.io/soporte-clientes/`
+- [x] Un enlace profundo (`/soporte-clientes/portal`) abre la aplicación, no un 404 de GitHub
+- [x] Si un test falla, no se publica
 
 **Verification:** ejecución del workflow en verde y comprobación de la URL y de un enlace profundo con el MCP
 **Dependencies:** T1
@@ -78,10 +78,10 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Suite `tests/rls/` con sesiones anónimas reales.
 
 **Acceptance criteria:**
-- [ ] El cliente A no lee ni escribe tickets, conversaciones ni mensajes del cliente B
-- [ ] El cliente no puede cambiar el estado o la prioridad de un ticket, ni crearlo con `origen = 'ia'`
-- [ ] Las transiciones de estado inválidas se rechazan (tests unitarios)
-- [ ] `get_advisors` sin errores
+- [x] El cliente A no lee ni escribe tickets, conversaciones ni mensajes del cliente B
+- [x] El cliente no puede cambiar el estado o la prioridad de un ticket, ni crearlo con `origen = 'ia'`
+- [x] Las transiciones de estado inválidas se rechazan (tests unitarios)
+- [x] `get_advisors` sin errores
 
 **Verification:** `npm test` · `npm run test:rls` (cuando esté activo el acceso anónimo) · SQL simulado · `get_advisors`
 **Dependencies:** T3

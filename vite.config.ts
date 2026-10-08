@@ -14,7 +14,11 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['tests/**/*.test.ts'],
-    exclude: ['tests/rls/**'],
+    projects: [
+      // npm test: rápidos, sin red (también en la CI)
+      { extends: true, test: { name: 'unit', include: ['tests/**/*.test.ts'], exclude: ['tests/rls/**'] } },
+      // npm run test:rls: aislamiento con sesiones reales contra Supabase
+      { extends: true, test: { name: 'rls', include: ['tests/rls/**/*.test.ts'], testTimeout: 20_000 } },
+    ],
   },
 })

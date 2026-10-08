@@ -54,8 +54,8 @@ T13 Guion y ensayo de la demo                       ← T12
 
 ### Fase 1: Base (jueves 8 noche – viernes 9)
 - [x] T1: Esqueleto Vite + React + Tailwind + shadcn con el tema de ESTETICA y la pantalla de entrada
-- [ ] T2: Publicación continua en GitHub Pages
-- [ ] T3: Identidad y webs: proyecto Supabase, RLS y "Probar como cliente"
+- [x] T2: Publicación continua en GitHub Pages
+- [x] T3: Identidad y webs: proyecto Supabase, RLS y "Probar como cliente"
 - [ ] T4: Incidencias: esquema, RLS y tests de aislamiento
 - [ ] T5: Incidencias del cliente: abrir a mano (plan B), lista y detalle
 
