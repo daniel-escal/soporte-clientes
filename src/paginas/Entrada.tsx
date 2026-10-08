@@ -1,6 +1,6 @@
 import { ArrowRight, Globe, MessageSquareText, Sparkles, TicketCheck } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
 import { OrbeAsistente } from '@/componentes/OrbeAsistente'
@@ -76,6 +76,9 @@ function AccesoDemo() {
       <p role="alert" className="mt-3 min-h-5 text-sm text-[var(--prioridad-urgente)]">
         {error}
       </p>
+      <Link to="/admin/entrar" className="mt-1 inline-flex min-h-11 items-center text-sm text-texto-suave underline-offset-4 hover:text-texto hover:underline">
+        Acceso del administrador
+      </Link>
     </div>
   )
 }

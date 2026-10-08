@@ -288,38 +288,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      abrir_incidencia: {
-        Args: {
-          p_descripcion: string
-          p_prioridad?: Database["public"]["Enums"]["prioridad"]
-          p_titulo: string
-          p_web_id?: string
-        }
-        Returns: {
-          actualizado_en: string
-          categoria: Database["public"]["Enums"]["categoria"]
-          cliente_id: string
-          conversacion_id: string | null
-          creado_en: string
-          descripcion: string
-          estado: Database["public"]["Enums"]["estado_ticket"]
-          id: string
-          numero: number
-          origen: Database["public"]["Enums"]["origen_ticket"]
-          primera_respuesta_en: string | null
-          prioridad: Database["public"]["Enums"]["prioridad"]
-          resumen_ia: string | null
-          tipo: Database["public"]["Enums"]["tipo_ticket"]
-          titulo: string
-          web_id: string | null
-        }
-        SetofOptions: {
-          from: "*"
-          to: "tickets"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
       abrir_solicitud: {
         Args: {
           p_categoria?: Database["public"]["Enums"]["categoria"]
@@ -351,6 +319,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      marcar_resuelta_ia: {
+        Args: { p_conversacion: string }
+        Returns: boolean
       }
     }
     Enums: {

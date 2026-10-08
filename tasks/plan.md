@@ -66,7 +66,7 @@ T13 Guion y ensayo de la demo                       ← T12
 
 ### Fase 2: Asistente (viernes 9 – sábado 10)
 - [x] T6: Asistente: Edge Function con Gemini, chat con el orbe (responder y pedir dato)
-- [ ] T7: Asistente: escalar a ticket, FAQ inicial, límites de uso y plan B (adelantado en la T6; falta `resuelta_ia`)
+- [x] T7: Asistente: escalar a ticket, FAQ inicial, límites de uso y plan B
 - [x] T7b: Peticiones de cambio y prioridad decidida por la IA (añadida el 09/10 a petición de Daniel)
 - [ ] T8: Evaluación de la IA: 10 conversaciones + 3 ataques
 
@@ -75,9 +75,9 @@ T13 Guion y ensayo de la demo                       ← T12
 - [ ] Revisión con Daniel y push
 
 ### Fase 3: Panel (domingo 11)
-- [ ] T9: Panel: acceso de administrador y bandeja en tiempo real
-- [ ] T10: Panel: detalle del ticket, estados, prioridad y respuesta
-- [ ] T11: Panel: KPI y editor de la FAQ
+- [x] T9: Panel: acceso de administrador y bandeja en tiempo real
+- [x] T10: Panel: detalle del ticket, estados, prioridad y respuesta
+- [x] T11: Panel: KPI y editor de la FAQ
 
 ### Checkpoint 3: el flujo completo
 - [ ] Cliente → IA → ticket → panel → respuesta → cliente, en dos pantallas y sin recargar

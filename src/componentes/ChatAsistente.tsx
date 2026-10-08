@@ -1,4 +1,4 @@
-import { Headset, SendHorizontal } from 'lucide-react'
+import { CircleCheck, Headset, SendHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { BurbujaMensaje, type MensajeChat } from '@/componentes/BurbujaMensaje'
 import { FormularioSolicitud } from '@/componentes/FormularioSolicitud'
@@ -7,12 +7,16 @@ import { TarjetaTicketCreado } from '@/componentes/TarjetaTicketCreado'
 import { Button } from '@/componentes/ui/button'
 import { Label } from '@/componentes/ui/label'
 import { Textarea } from '@/componentes/ui/textarea'
-import { borradorIncidencia, loQueHaContado, mensajeDeFallo, type TicketCreado } from '@/dominio/asistente'
+import { borradorIncidencia, loQueHaContado, mensajeDeFallo, type RespuestaAsistente, type TicketCreado } from '@/dominio/asistente'
 import { guardarConversacion, leerConversacion, preguntarAlAsistente } from '@/lib/asistente'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
 
-type Entrada = ({ tipo: 'mensaje' } & MensajeChat) | { tipo: 'ticket'; id: string; ticket: TicketCreado }
+type Entrada =
+  | ({ tipo: 'mensaje'; accion?: RespuestaOk['accion'] } & MensajeChat)
+  | { tipo: 'ticket'; id: string; ticket: TicketCreado }
+  | { tipo: 'resuelta'; id: string }
+type RespuestaOk = Extract<RespuestaAsistente, { ok: true }>
 
 // Primer mensaje fijo (no se guarda). Deja claro desde el principio que quien responde es una IA.
 const SALUDO: MensajeChat = {
@@ -23,6 +27,8 @@ const SALUDO: MensajeChat = {
 }
 
 const SUGERENCIAS = ['El formulario de contacto no envía', 'Mi web no carga', 'Quiero cambiar el horario', 'Quiero añadir una galería de fotos']
+const CLASE_CHIP =
+  'min-h-11 rounded-full border border-borde-control px-4 text-sm text-texto-suave transition-colors hover:bg-superficie-alta hover:text-texto'
 
 type Props = {
   usuarioId: string
@@ -96,7 +102,14 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
     const { ticket } = resultado
     setEntradas((actuales) => [
       ...actuales,
-      { tipo: 'mensaje', id: resultado.mensaje.id, autor: 'ia', contenido: resultado.respuesta, creado_en: resultado.mensaje.creado_en },
+      {
+        tipo: 'mensaje',
+        id: resultado.mensaje.id,
+        autor: 'ia',
+        contenido: resultado.respuesta,
+        creado_en: resultado.mensaje.creado_en,
+        accion: resultado.accion,
+      },
       ...(ticket ? [{ tipo: 'ticket' as const, id: `ticket-${ticket.id}`, ticket }] : []),
     ])
     if (ticket) {
@@ -106,6 +119,15 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
     } else {
       recordarConversacion(resultado.conversacion_id)
     }
+  }
+
+  // "¿Te ha servido?" → sí: la conversación queda resuelta por el asistente (KPI) y la siguiente empieza otra.
+  async function marcarResuelta() {
+    if (!conversacionId) return
+    const { data: marcada } = await supabase.rpc('marcar_resuelta_ia', { p_conversacion: conversacionId })
+    if (!marcada) return
+    setEntradas((actuales) => [...actuales, { tipo: 'resuelta', id: `resuelta-${conversacionId}` }])
+    recordarConversacion(null)
   }
 
   // Plan B: la incidencia abierta a mano también se confirma en el chat.
@@ -129,7 +151,8 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
     }
   }
 
-  const estadoOrbe = pensando ? 'pensando' : entradas.at(-1)?.tipo === 'ticket' ? 'listo' : 'reposo'
+  const ultima = entradas.at(-1)
+  const estadoOrbe = pensando ? 'pensando' : ultima?.tipo === 'ticket' ? 'listo' : 'reposo'
 
   return (
     <section aria-labelledby="titulo-asistente" className="overflow-hidden rounded-xl border bg-card shadow-tarjeta">
@@ -152,17 +175,26 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
       >
         <ol className="grid gap-3">
           <BurbujaMensaje mensaje={SALUDO} />
-          {entradas.map((entrada) =>
-            entrada.tipo === 'ticket' ? (
-              <TarjetaTicketCreado
-                key={entrada.id}
-                ticket={entrada.ticket}
-                nombreWeb={webs.find((web) => web.id === entrada.ticket.web_id)?.nombre}
-              />
-            ) : (
-              <BurbujaMensaje key={entrada.id} mensaje={entrada} />
-            ),
-          )}
+          {entradas.map((entrada) => {
+            if (entrada.tipo === 'ticket') {
+              return (
+                <TarjetaTicketCreado
+                  key={entrada.id}
+                  ticket={entrada.ticket}
+                  nombreWeb={webs.find((web) => web.id === entrada.ticket.web_id)?.nombre}
+                />
+              )
+            }
+            if (entrada.tipo === 'resuelta') {
+              return (
+                <li key={entrada.id} className="flex items-center justify-center gap-1.5 py-1 text-sm text-texto-suave">
+                  <CircleCheck aria-hidden className="size-4 text-[var(--estado-resuelto)]" />
+                  ¡Me alegro! Si necesitas algo más, escríbeme.
+                </li>
+              )
+            }
+            return <BurbujaMensaje key={entrada.id} mensaje={entrada} />
+          })}
           {pensando && (
             <li className="w-fit max-w-[85%] rounded-lg rounded-bl-sm border border-violeta/40 px-4 py-3">
               <p className="flex items-center gap-1.5 text-xs font-medium text-texto">
@@ -174,15 +206,23 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
           )}
         </ol>
 
+        {/* Tras una respuesta del asistente (no una pregunta ni una incidencia): ¿le ha servido? */}
+        {ultima?.tipo === 'mensaje' && ultima.accion === 'responder' && !pensando && !fallo && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-texto-suave">
+            <span>¿Te ha servido?</span>
+            <button type="button" onClick={marcarResuelta} className={CLASE_CHIP}>
+              Sí, resuelto
+            </button>
+            <button type="button" onClick={() => enviar('No me ha servido, necesito que lo revise Daniel.')} className={CLASE_CHIP}>
+              No, necesito ayuda
+            </button>
+          </div>
+        )}
+
         {entradas.length === 0 && !pensando && (
           <div className="mt-4 flex flex-wrap gap-2">
             {SUGERENCIAS.map((sugerencia) => (
-              <button
-                key={sugerencia}
-                type="button"
-                onClick={() => enviar(sugerencia)}
-                className="min-h-11 rounded-full border border-borde-control px-4 text-sm text-texto-suave transition-colors hover:bg-superficie-alta hover:text-texto"
-              >
+              <button key={sugerencia} type="button" onClick={() => enviar(sugerencia)} className={CLASE_CHIP}>
                 {sugerencia}
               </button>
             ))}

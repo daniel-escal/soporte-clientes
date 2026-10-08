@@ -1,9 +1,11 @@
 import { ArrowLeft, Globe } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
+import { CuadroRespuesta } from '@/componentes/CuadroRespuesta'
 import { EtiquetaTipo, InsigniaEstado } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
+import { useCambiosDelTicket, useConversacion } from '@/lib/en-directo'
 import { haceCuanto } from '@/lib/formato'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
@@ -12,37 +14,38 @@ import type { Tables } from '@/lib/tipos-bd'
 type Solicitud = Pick<Tables<'tickets'>, 'id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'conversacion_id'> & {
   web: { nombre: string } | null
 }
-type Mensaje = Pick<Tables<'mensajes'>, 'id' | 'autor' | 'contenido' | 'creado_en'>
 
 export default function DetalleSolicitud() {
   const { id } = useParams()
   const [solicitud, setSolicitud] = useState<Solicitud | null>(null)
-  const [mensajes, setMensajes] = useState<Mensaje[]>([])
   const [estado, setEstado] = useState<'cargando' | 'listo' | 'no-encontrada' | 'error'>('cargando')
+  // Las respuestas de Daniel llegan solas (Realtime con RLS: solo lo de sus conversaciones).
+  const { mensajes, error: errorMensajes, anadir } = useConversacion(solicitud?.conversacion_id ?? null)
 
   useEffect(() => {
-    async function cargar() {
-      const { data, error } = await supabase
-        .from('tickets')
-        .select('id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
-        .eq('id', id!)
-        .maybeSingle()
-      if (error) return setEstado('error')
-      if (!data) return setEstado('no-encontrada')
-      setSolicitud(data)
-      if (data.conversacion_id) {
-        const respuesta = await supabase
-          .from('mensajes')
-          .select('id, autor, contenido, creado_en')
-          .eq('conversacion_id', data.conversacion_id)
-          .order('creado_en')
-        if (respuesta.error) return setEstado('error')
-        setMensajes(respuesta.data)
-      }
-      setEstado('listo')
+    let vigente = true
+    supabase
+      .from('tickets')
+      .select('id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
+      .eq('id', id!)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (!vigente) return
+        if (error) return setEstado('error')
+        if (!data) return setEstado('no-encontrada')
+        setSolicitud(data)
+        setEstado('listo')
+      })
+    return () => {
+      vigente = false
     }
-    cargar()
   }, [id])
+
+  // Si Daniel cambia el estado, se ve sin recargar.
+  const alCambiar = useCallback((fila: Tables<'tickets'>) => {
+    setSolicitud((actual) => actual && { ...actual, estado: fila.estado, titulo: fila.titulo })
+  }, [])
+  useCambiosDelTicket(solicitud?.id, alCambiar)
 
   return (
     <div className="min-h-svh">
@@ -86,12 +89,35 @@ export default function DetalleSolicitud() {
               <h2 id="titulo-conversacion" className="text-sm font-semibold tracking-[0.08em] text-texto-tenue uppercase">
                 Conversación
               </h2>
-              <ol className="mt-4 grid gap-3">
-                {mensajes.map((mensaje) => (
-                  <BurbujaMensaje key={mensaje.id} mensaje={mensaje} />
-                ))}
-              </ol>
-              <p className="mt-6 text-sm text-texto-suave">Daniel te responderá en esta misma conversación.</p>
+              {errorMensajes && (
+                <p role="alert" className="mt-3 text-[var(--prioridad-urgente)]">
+                  No se han podido cargar los mensajes. Prueba a recargar la página.
+                </p>
+              )}
+              <div role="log" aria-label="Mensajes de la solicitud" className="mt-4">
+                <ol className="grid gap-3">
+                  {mensajes?.map((mensaje) => (
+                    <BurbujaMensaje key={mensaje.id} mensaje={mensaje} />
+                  ))}
+                </ol>
+              </div>
+
+              {solicitud.estado === 'cerrado' ? (
+                <p className="mt-6 text-sm text-texto-suave">Esta solicitud está cerrada. Si necesitas algo más, cuéntaselo al asistente.</p>
+              ) : (
+                solicitud.conversacion_id && (
+                  <div className="mt-6 grid gap-2 rounded-xl border bg-card p-4">
+                    <p className="text-sm text-texto-suave">Daniel te responderá aquí mismo. Si quieres añadir algo, escríbelo:</p>
+                    <CuadroRespuesta
+                      conversacionId={solicitud.conversacion_id}
+                      autor="cliente"
+                      etiqueta="Tu mensaje para Daniel"
+                      placeholder="Escribe aquí…"
+                      onEnviado={(mensaje) => anadir([mensaje])}
+                    />
+                  </div>
+                )
+              )}
             </section>
           </article>
         )}

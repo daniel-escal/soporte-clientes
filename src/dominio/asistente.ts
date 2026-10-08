@@ -45,14 +45,14 @@ export function mensajeDeFallo(motivo: string): string {
   }
 }
 
-type EntradaChat = { tipo: 'mensaje'; autor: string; contenido: string } | { tipo: 'ticket' }
+type EntradaChat = { tipo: 'mensaje'; autor: string; contenido: string } | { tipo: 'ticket' } | { tipo: 'resuelta' }
 
 /**
- * Lo que el cliente ha escrito en la conversación en curso: desde la última incidencia creada, porque
- * lo anterior ya está en esa incidencia y no debe colarse en la siguiente.
+ * Lo que el cliente ha escrito en la conversación en curso: desde la última que terminó (con una
+ * incidencia creada o resuelta por el asistente), porque lo anterior no debe colarse en la siguiente.
  */
 export function loQueHaContado(entradas: EntradaChat[]): string[] {
-  const inicio = entradas.findLastIndex((entrada) => entrada.tipo === 'ticket') + 1
+  const inicio = entradas.findLastIndex((entrada) => entrada.tipo !== 'mensaje') + 1
   return entradas.slice(inicio).flatMap((entrada) => (entrada.tipo === 'mensaje' && entrada.autor === 'cliente' ? [entrada.contenido] : []))
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { ESTADOS, PRIORIDADES, TIPOS, puedeCambiar, siguientesEstados, type Estado } from '@/dominio/tickets'
+import { CATEGORIAS, ESTADOS, PRIORIDADES, TIPOS, puedeCambiar, siguientesEstados, type Estado } from '@/dominio/tickets'
 import { Constants } from '@/lib/tipos-bd'
 
 describe('vocabulario sincronizado con la base de datos', () => {
@@ -13,6 +13,10 @@ describe('vocabulario sincronizado con la base de datos', () => {
 
   test('los tipos del dominio son exactamente los del enum tipo_ticket', () => {
     expect([...TIPOS]).toEqual([...Constants.public.Enums.tipo_ticket])
+  })
+
+  test('las categorías del dominio son exactamente las del enum categoria', () => {
+    expect([...CATEGORIAS]).toEqual([...Constants.public.Enums.categoria])
   })
 })
 

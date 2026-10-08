@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NOMBRE_ESTADO, NOMBRE_PRIORIDAD, NOMBRE_TIPO, type Estado, type Prioridad, type Tipo } from '@/dominio/tickets'
+import { NOMBRE_ESTADO, NOMBRE_ESTADO_ADMIN, NOMBRE_PRIORIDAD, NOMBRE_TIPO, type Estado, type Prioridad, type Tipo } from '@/dominio/tickets'
 
 // Texto del color del estado sobre su tinte al 16 % (contrastes comprobados en tests/tema.test.ts).
 // Siempre texto + icono: el color nunca es el único indicador.
@@ -51,9 +51,9 @@ function Insignia({ tono, icono: Icono, texto, className }: { tono: keyof typeof
   )
 }
 
-export function InsigniaEstado({ estado, className }: { estado: Estado; className?: string }) {
+export function InsigniaEstado({ estado, paraAdmin = false, className }: { estado: Estado; paraAdmin?: boolean; className?: string }) {
   const { tono, icono } = ESTILO_ESTADO[estado]
-  return <Insignia tono={tono} icono={icono} texto={NOMBRE_ESTADO[estado]} className={className} />
+  return <Insignia tono={tono} icono={icono} texto={(paraAdmin ? NOMBRE_ESTADO_ADMIN : NOMBRE_ESTADO)[estado]} className={className} />
 }
 
 export function InsigniaPrioridad({ prioridad, className }: { prioridad: Prioridad; className?: string }) {

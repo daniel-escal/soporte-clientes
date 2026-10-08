@@ -70,6 +70,11 @@ describe('loQueHaContado', () => {
     const entradas = [cliente('El formulario no envía'), ia('He abierto una incidencia'), { tipo: 'ticket' as const }, cliente('Ahora la web del taller va lenta')]
     expect(loQueHaContado(entradas)).toEqual(['Ahora la web del taller va lenta'])
   })
+
+  test('tampoco lo de una conversación que el asistente ya resolvió', () => {
+    const entradas = [cliente('No me llegan los correos'), ia('Mira en spam'), { tipo: 'resuelta' as const }, cliente('Otra cosa: quiero una galería')]
+    expect(loQueHaContado(entradas)).toEqual(['Otra cosa: quiero una galería'])
+  })
 })
 
 describe('borradorIncidencia', () => {

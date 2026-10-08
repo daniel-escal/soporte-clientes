@@ -6,19 +6,36 @@ import { cn } from '@/lib/utils'
 /** Un mensaje de la conversación. Sin fecha en los que no vienen de la BD (el saludo del chat). */
 export type MensajeChat = Pick<Tables<'mensajes'>, 'id' | 'autor' | 'contenido'> & { creado_en?: string }
 
-const AUTOR = {
-  cliente: { nombre: 'Tú', icono: UserRound, clase: 'ml-auto bg-superficie-alta rounded-br-sm' },
-  ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
-  admin: { nombre: 'Daniel', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
+// Lo propio va a la derecha ("Tú"); lo demás, a la izquierda. Depende de quién mira.
+const PROPIO = 'ml-auto bg-superficie-alta rounded-br-sm'
+const ESTILO = {
+  cliente: {
+    cliente: { nombre: 'Tú', icono: UserRound, clase: PROPIO },
+    ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
+    admin: { nombre: 'Daniel', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
+  },
+  admin: {
+    cliente: { nombre: 'Cliente', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
+    ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
+    admin: { nombre: 'Tú', icono: UserRound, clase: PROPIO },
+  },
 } as const
 
-export function BurbujaMensaje({ mensaje }: { mensaje: MensajeChat }) {
-  const { nombre, icono: Icono, clase } = AUTOR[mensaje.autor]
+type Props = {
+  mensaje: MensajeChat
+  /** Desde dónde se mira: el portal del cliente (por defecto) o el panel de Daniel. */
+  vista?: 'cliente' | 'admin'
+  /** En el panel, el nombre del cliente en lugar de "Cliente". */
+  nombreCliente?: string
+}
+
+export function BurbujaMensaje({ mensaje, vista = 'cliente', nombreCliente }: Props) {
+  const { nombre, icono: Icono, clase } = ESTILO[vista][mensaje.autor]
   return (
     <li className={cn('w-fit max-w-[85%] rounded-lg px-4 py-3', clase)}>
       <p className="flex items-center gap-1.5 text-xs text-texto-suave">
         <Icono aria-hidden className="size-3.5" />
-        <span className="font-medium text-texto">{nombre}</span>
+        <span className="font-medium text-texto">{vista === 'admin' && mensaje.autor === 'cliente' && nombreCliente ? nombreCliente : nombre}</span>
         {mensaje.creado_en && <> · {haceCuanto(mensaje.creado_en)}</>}
       </p>
       {/* Texto plano siempre: nunca HTML (lo que escriben clientes o la IA no es de fiar) */}

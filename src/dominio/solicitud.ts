@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { erroresPorCampo as erroresPorCampoGenerico } from '@/dominio/formularios'
 
 // Formulario "abrir a mano" (plan B). El cliente solo dice si algo falla o si quiere un cambio: es lo
 // que sabe decir con seguridad. La prioridad no la elige él; la fija la base de datos (incidencia →
@@ -54,9 +55,4 @@ export type SolicitudManual = z.infer<typeof esquemaSolicitudManual>
 export type CampoSolicitud = keyof SolicitudManual
 
 /** Primer mensaje de error de cada campo, para mostrarlo junto a él. */
-export function erroresPorCampo(error: z.ZodError): Partial<Record<CampoSolicitud, string>> {
-  const { fieldErrors } = z.flattenError(error) as { fieldErrors: Partial<Record<CampoSolicitud, string[]>> }
-  return Object.fromEntries(
-    Object.entries(fieldErrors).flatMap(([campo, mensajes]) => (mensajes?.[0] ? [[campo, mensajes[0]]] : [])),
-  )
-}
+export const erroresPorCampo = (error: z.ZodError) => erroresPorCampoGenerico<CampoSolicitud>(error)

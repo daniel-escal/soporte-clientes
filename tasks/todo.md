@@ -149,7 +149,7 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 **Acceptance criteria:**
 - [x] Un problema que no está en la FAQ abre un ticket con título, resumen, categoría, prioridad y web (adelantado en la T6)
 - [x] Al superar el límite, el cliente recibe un mensaje claro y no se llama a Gemini (`scripts/probar-limite.mjs`)
-- [ ] La conversación queda marcada como `resuelta_ia` o `escalada` (`escalada` hecho; falta `resuelta_ia`)
+- [x] La conversación queda marcada como `resuelta_ia` (botón "¿Te ha servido?", `supabase/tests/rls_resuelta_ia.sql`) o `escalada`
 
 **Verification:** `npm test` · flujo real en el MCP · consulta SQL de los datos creados
 **Dependencies:** T6
@@ -165,7 +165,7 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - [x] El formulario no pide la urgencia (incidencia → media, petición → baja) y RLS rechaza otra prioridad contra la API (`supabase/tests/rls_abrir_solicitud.sql`, 13 casos)
 - [x] La IA clasifica las peticiones y decide la prioridad aunque el cliente diga que es urgente, sin comunicársela
 - [x] El cliente ve el tipo y el estado, no la prioridad
-- [ ] Borrar el envoltorio temporal `abrir_incidencia` cuando el frontend nuevo esté publicado
+- [x] Borrar el envoltorio temporal `abrir_incidencia` cuando el frontend nuevo esté publicado
 
 **Verification:** tests · SQL de RLS · flujo real en el navegador (petición por chat y por formulario)
 
@@ -199,9 +199,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Bandeja con filtros (estado, prioridad y cliente) y Realtime: el ticket nuevo entra destacado.
 
 **Acceptance criteria:**
-- [ ] Un cliente no puede entrar en `/admin` (ni por la ruta ni por los datos)
-- [ ] Un ticket nuevo aparece en la bandeja en ≤ 3 s sin recargar
-- [ ] El panel no se descarga en el portal del cliente (comprobado en la red)
+- [x] Un cliente no puede entrar en `/admin` (ni por la ruta ni por los datos)
+- [x] Un ticket nuevo aparece en la bandeja en ≤ 3 s sin recargar (entra destacado)
+- [x] El panel no se descarga en el portal del cliente (comprobado en la red y en los trozos del build)
 
 **Verification:** MCP con dos pestañas (cliente y admin) y la pestaña de red
 **Dependencies:** T7 · **Daniel:** su usuario administrador
@@ -213,9 +213,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 **Description:** detalle con el resumen de la IA y la conversación, cambio de estado (solo transiciones válidas) y de prioridad, y respuesta del administrador. El cliente la recibe en tiempo real y se registra la fecha de la primera respuesta.
 
 **Acceptance criteria:**
-- [ ] Solo se ofrecen las transiciones válidas
-- [ ] La respuesta llega al cliente sin recargar
-- [ ] `primera_respuesta_en` se guarda una sola vez
+- [x] Solo se ofrecen las transiciones válidas
+- [x] La respuesta llega al cliente sin recargar (y el cliente puede contestar; el estado se ajusta solo)
+- [x] `primera_respuesta_en` se guarda una sola vez (`supabase/tests/respuestas.sql`)
 
 **Verification:** MCP con dos pestañas · SQL
 **Dependencies:** T9
@@ -230,8 +230,8 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Editor de la FAQ: crear, editar y activar o desactivar.
 
 **Acceptance criteria:**
-- [ ] Los KPI coinciden con una consulta SQL de control
-- [ ] Una entrada de la FAQ desactivada deja de usarse en el prompt
+- [x] Los KPI coinciden con una consulta SQL de control
+- [x] Una entrada de la FAQ desactivada deja de usarse en el prompt (la función solo pide las activas y RLS solo deja leer esas al cliente)
 
 **Verification:** `npm test` · SQL · MCP
 **Dependencies:** T10
