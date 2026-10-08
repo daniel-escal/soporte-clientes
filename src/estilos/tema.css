@@ -1,0 +1,211 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+
+/* Solo hay tema oscuro: <html class="dark"> activa las variantes dark: de shadcn. */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Tokens de docs/ESTETICA.md. Los contrastes los comprueba tests/tema.test.ts:
+ * si cambias un color, el test dirá si sigue cumpliendo AA.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Superficies */
+  --fondo: #23243b;
+  --superficie: #181a2c;
+  --superficie-alta: #20223a;
+  --borde: #2f3253;
+  --borde-control: #6e72a3;
+
+  /* Texto */
+  --texto: #e9eaf5;
+  --texto-suave: #a7aac6;
+  --texto-tenue: #8b8fb2;
+  --azul-texto: #7aa7ff;
+  --violeta-texto: #b49cff;
+
+  /* Acentos */
+  --azul: #3b82f6;
+  --violeta: #8b5cf6;
+  --magenta: #d946ef;
+  --cian: #38bdf8;
+  --foco: #b49cff;
+  --boton-inicio: #2563eb;
+  --boton-fin: #7c3aed;
+  --degradado-marca: linear-gradient(90deg, var(--azul), var(--violeta));
+  --degradado-boton: linear-gradient(90deg, var(--boton-inicio), var(--boton-fin));
+
+  /* Estados y prioridades */
+  --estado-abierto: #7aa7ff;
+  --estado-en-curso: #b49cff;
+  --estado-esperando: #fbbf24;
+  --estado-resuelto: #34d399;
+  --estado-cerrado: #a7aac6;
+  --prioridad-urgente: #fb7185;
+  --prioridad-alta: #fb923c;
+
+  /* Efectos */
+  --sombra-tarjeta: 0 8px 24px rgb(0 0 0 / 0.35);
+  --brillo-violeta: 0 0 24px rgb(139 92 246 / 0.45);
+  --brillo-cian: 0 0 32px rgb(56 189 248 / 0.35);
+
+  /* Variables de shadcn/ui, mapeadas a los tokens */
+  --background: var(--fondo);
+  --foreground: var(--texto);
+  --card: var(--superficie);
+  --card-foreground: var(--texto);
+  --popover: var(--superficie);
+  --popover-foreground: var(--texto);
+  --primary: var(--boton-fin);
+  --primary-foreground: #ffffff;
+  --secondary: var(--superficie-alta);
+  --secondary-foreground: var(--texto);
+  --muted: var(--superficie-alta);
+  --muted-foreground: var(--texto-suave);
+  --accent: var(--superficie-alta);
+  --accent-foreground: var(--texto);
+  --destructive: var(--prioridad-urgente);
+  --border: var(--borde);
+  --input: var(--borde-control);
+  --ring: var(--foco);
+  --chart-1: var(--azul);
+  --chart-2: var(--violeta);
+  --chart-3: var(--cian);
+  --chart-4: var(--estado-esperando);
+  --chart-5: var(--prioridad-urgente);
+  --radius: 0.75rem; /* 12 px: tarjetas */
+  --sidebar: var(--superficie);
+  --sidebar-foreground: var(--texto);
+  --sidebar-primary: var(--boton-fin);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--superficie-alta);
+  --sidebar-accent-foreground: var(--texto);
+  --sidebar-border: var(--borde);
+  --sidebar-ring: var(--foco);
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-alta: var(--superficie-alta);
+  --color-borde-control: var(--borde-control);
+  --color-texto: var(--texto);
+  --color-texto-suave: var(--texto-suave);
+  --color-texto-tenue: var(--texto-tenue);
+  --color-azul: var(--azul);
+  --color-violeta: var(--violeta);
+  --color-azul-texto: var(--azul-texto);
+  --color-violeta-texto: var(--violeta-texto);
+  --color-cian: var(--cian);
+  --color-magenta: var(--magenta);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Jerarquía de radios de ESTETICA: tarjetas 12 px, controles 8 px */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: var(--radius);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+
+  --shadow-tarjeta: var(--sombra-tarjeta);
+  --shadow-brillo-violeta: var(--brillo-violeta);
+  --shadow-brillo-cian: var(--brillo-cian);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 0.875rem; /* 14 px: densidad del panel; el chat sube a 16 px */
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+  }
+}
+
+/* Utilidades de la marca. Reglas de uso en docs/ESTETICA.md: el degradado es una señal, no un fondo. */
+@utility degradado-boton {
+  background-image: var(--degradado-boton);
+}
+
+@utility degradado-marca {
+  background-image: var(--degradado-marca);
+}
+
+@utility cifras {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Halo del orbe del asistente: violeta + cian (ESTETICA: solo en el orbe) */
+@utility brillo-orbe {
+  box-shadow: var(--brillo-violeta), var(--brillo-cian);
+}
+
+@theme {
+  --animate-respirar: respirar 2.4s ease-in-out infinite;
+
+  @keyframes respirar {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+}

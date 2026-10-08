@@ -186,12 +186,12 @@ Versiones comprobadas en npm el 2026-10-08.
 
 | Pieza | Elección |
 | --- | --- |
-| Frontend | **Vite 8 + React 19 + TypeScript 7**, React Router 8 |
+| Frontend | **Vite 8 + React 19 + TypeScript 6** (el que trae la plantilla oficial de Vite), React Router 8 |
 | UI | Tailwind CSS 4 + **shadcn/ui** (componentes accesibles sobre Radix), iconos lucide-react, Inter Variable alojada en el proyecto |
 | Backend | **Supabase**: Postgres con RLS, Auth (anónimo + email/contraseña), Realtime y **Edge Functions** (Deno) para la IA |
 | IA | **Gemini API** (`@google/genai`), modelo configurable por secreto |
 | Validación | zod 4, la misma en el frontend y en la Edge Function |
-| Tests | Vitest 5 |
+| Tests y lint | Vitest 5 y oxlint (el linter de la plantilla de Vite) |
 | Despliegue | **GitHub Pages** con GitHub Actions, en `daniel-escal.github.io/soporte-clientes` (sin cuentas nuevas) |
 
 ### Por qué Vite + React y no Next.js (cambio respecto a lo que se habló en claude.ai)

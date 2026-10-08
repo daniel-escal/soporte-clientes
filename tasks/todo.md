@@ -21,9 +21,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Añadir `CLAUDE.md` y `AGENTS.md` con las reglas del proyecto, para Claude Code y Cursor.
 
 **Acceptance criteria:**
-- [ ] Un test lee `tema.css` y comprueba los contrastes mínimos de `ESTETICA.md` (texto ≥ 4,5; foco y borde de control ≥ 3; blanco sobre el botón ≥ 4,5)
-- [ ] La pantalla de entrada se ve bien a 375 y 1280 px, sin scroll horizontal y con la consola limpia
-- [ ] Con `prefers-reduced-motion` el orbe no se anima
+- [x] Un test lee `tema.css` y comprueba los contrastes mínimos de `ESTETICA.md` (texto ≥ 4,5; foco y borde de control ≥ 3; blanco sobre el botón ≥ 4,5)
+- [x] La pantalla de entrada se ve bien a 375 y 1280 px, sin scroll horizontal y con la consola limpia
+- [x] Con `prefers-reduced-motion` el orbe no se anima
 
 **Verification:** `npm test` · `npm run typecheck` · `npm run lint` · `npm run build` · MCP: capturas a 375 y 1280 px y emulación de movimiento reducido
 **Dependencies:** Ninguna
