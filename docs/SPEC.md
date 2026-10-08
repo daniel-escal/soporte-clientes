@@ -133,9 +133,22 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - En la v1 la FAQ entera va en el prompt, porque son unas 15–25 entradas.
   - Buscar por similitud con pgvector y `gemini-embedding-2` queda como mejora si sobra tiempo.
 - **Proveedor de IA intercambiable:**
-  - interfaz en `_shared/ia.ts`;
-  - modelo en el secreto `GEMINI_MODEL` (por defecto `gemini-3.8-flash`, con nivel gratuito según la página de precios de Gemini a 2026-10-08);
+  - interfaz `ProveedorIA` en `_shared/gemini.ts`, que llama a la API REST de Gemini (`generateContent`) sin SDK;
+  - cadena de modelos de respaldo, configurable con el secreto opcional `GEMINI_MODELOS` (separados por comas):
+    - por defecto: `gemini-3.6-flash` → `gemini-3.5-flash-lite` → `gemini-3.1-flash-lite`;
+    - si uno falla (503, 429, 404, más de 8 s o respuesta vacía o cortada), se prueba el siguiente, con un presupuesto total de 20 s;
+    - medido el 2026-10-08: 3.6-flash responde en unos 2 s, mientras que 3.8-flash pasaba de 8 s;
+  - configuración de Gemini 3:
+    - `thinkingLevel: 'low'`, el nivel recomendado para chat;
+    - sin `temperature`, que está obsoleta en Gemini 3;
+    - `maxOutputTokens` a 4096, porque incluye los tokens de razonamiento;
   - para pasar a Claude se cambia la implementación, no el resto.
+- **Cómo se escriben los mensajes** (decidido en la T6 con la skill de seguridad):
+  - El mensaje del cliente y la conversación se crean con la sesión del usuario, así que se aplica RLS.
+  - El mensaje de la IA (`autor = 'ia'`) solo lo escribe el servidor:
+    - usa la clave secreta, que solo existe dentro de la Edge Function;
+    - y únicamente después de comprobar con la sesión del usuario que la conversación es suya.
+  - Los logs guardan el modelo, los intentos y los tiempos, nunca el contenido del cliente.
 - **Límites de uso** (la demo es pública): 30 mensajes por usuario y hora, y un tope global por hora para proteger la cuota gratuita.
 - Criterios de aceptación:
   - [ ] Hay un set de **10 conversaciones de prueba** documentado, con su resultado esperado (resolver, pedir dato o abrir ticket con su categoría y prioridad), y al menos 9 de 10 se cumplen.
