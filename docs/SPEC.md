@@ -1,6 +1,6 @@
 # Spec: plataforma de soporte con IA para clientes de webs
 
-> Estado: **BORRADOR, pendiente de aprobación** (2026-10-08). No se planifica ni se programa hasta que se apruebe.
+> Estado: **APROBADA** (2026-10-08).
 > Estética: [`docs/ESTETICA.md`](ESTETICA.md) (forma parte de esta spec).
 
 ## Contexto
@@ -375,13 +375,13 @@ export function puedeCambiar(de: Estado, a: Estado): boolean {
     - `docs/GUION-DEMO.md` (5 minutos) escrito y ensayado de principio a fin el lunes 12;
     - el proyecto de Supabase activo el martes por la mañana.
 
-## Preguntas abiertas
+## Decisiones (antes preguntas abiertas)
 
-1. **Stack:** ¿apruebas Vite + React en lugar de Next.js? (Es mi recomendación; motivos arriba.)
-2. **Demo pública con sesiones anónimas:** cualquiera con el enlace podrá probar el chat (con límites de uso). ¿Te parece bien, o prefieres cuentas de demo que solo enseñes tú?
-3. **Nombre:** propongo "Soporte · daniel-escal.es" para el producto y "Asistente" para la IA. ¿Quieres darle otro nombre o personalidad?
-4. **Supabase:** propongo un proyecto nuevo, `soporte-clientes`, en Frankfurt, que ocuparía tu segundo hueco gratuito. `ev-charge-manager` seguiría activo. ¿O prefieres pausar ese?
-5. **Despliegue:** GitHub Pages (repo público, como la landing) o Vercel (habría que crear la cuenta).
+1. **Stack:** Vite + React (aprobado por Daniel).
+2. **Demo pública con sesiones anónimas:** aprobada.
+3. **Nombre:** "Soporte · daniel-escal.es" para el producto y "Asistente" para la IA (provisionales).
+4. **Supabase:** proyecto nuevo `soporte-clientes` en Frankfurt (`eu-central-1`). `ev-charge-manager` sigue activo.
+5. **Despliegue:** GitHub Pages, repositorio público `soporte-clientes` (aprobado por Daniel).
 
 ## Pasos que solo puede hacer Daniel
 
