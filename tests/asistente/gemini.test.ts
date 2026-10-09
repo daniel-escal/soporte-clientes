@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { ErrorIA, crearGemini } from '../../supabase/functions/_shared/gemini.ts'
 
 const contenidos = [{ role: 'user' as const, parts: [{ text: 'Mi web no carga' }] }]
@@ -159,20 +159,30 @@ describe('crearGemini', () => {
   })
 
   test('respeta el presupuesto total: no empieza otro intento si ya no queda tiempo', async () => {
-    let llamadas = 0
-    const ia = crearGemini({
-      apiKey: 'k',
-      modelos: ['a', 'b', 'c'],
-      timeoutPorIntentoMs: 30,
-      presupuestoMs: 40,
-      fetchImpl: (url, init) => {
-        llamadas++
-        return colgado(url, init)
-      },
-    })
-    const error = await ia.generar({ instrucciones: 'x', contenidos }).catch((e) => e)
-    expect(error.codigo).toBe('timeout')
-    expect(llamadas).toBeLessThanOrEqual(2)
+    // Temporizadores simulados: con los reales, el resultado dependía de la velocidad de la máquina (falló en CI).
+    vi.useFakeTimers()
+    try {
+      let llamadas = 0
+      const ia = crearGemini({
+        apiKey: 'k',
+        modelos: ['a', 'b', 'c'],
+        timeoutPorIntentoMs: 30,
+        presupuestoMs: 50,
+        fetchImpl: (url, init) => {
+          llamadas++
+          return colgado(url, init)
+        },
+      })
+      const promesa = ia.generar({ instrucciones: 'x', contenidos }).catch((e) => e)
+      await vi.advanceTimersByTimeAsync(100)
+      const error = await promesa
+      expect(error.codigo).toBe('timeout')
+      // 30 ms el primero; el segundo solo tiene los 20 ms que quedan; el tercero ya no empieza.
+      expect(llamadas).toBe(2)
+      expect(error.intentos.map((intento: { ms: number }) => intento.ms)).toEqual([30, 20])
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   test('un fallo de red → ErrorIA "servicio" con la causa técnica', async () => {
