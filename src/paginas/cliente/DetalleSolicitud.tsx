@@ -6,13 +6,14 @@ import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
 import { CuadroRespuesta } from '@/componentes/CuadroRespuesta'
 import { EtiquetaTipo, InsigniaEstado } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
+import { seguimientoParaCliente } from '@/dominio/seguimiento'
 import { useCambiosDelTicket, useConversacion } from '@/lib/en-directo'
 import { haceCuanto } from '@/lib/formato'
 import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
 
 // Vista del cliente: sin prioridad (es triaje interno; docs/SPEC.md).
-type Solicitud = Pick<Tables<'tickets'>, 'id' | 'cliente_id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'conversacion_id'> & {
+type Solicitud = Pick<Tables<'tickets'>, 'id' | 'cliente_id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'estado_desde' | 'recordado_en' | 'creado_en' | 'conversacion_id'> & {
   web: { nombre: string } | null
 }
 
@@ -27,7 +28,7 @@ export default function DetalleSolicitud() {
     let vigente = true
     supabase
       .from('tickets')
-      .select('id, cliente_id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
+      .select('id, cliente_id, numero, titulo, tipo, estado, estado_desde, recordado_en, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
       .eq('id', id!)
       .maybeSingle()
       .then(({ data, error }) => {
@@ -44,7 +45,9 @@ export default function DetalleSolicitud() {
 
   // Si Daniel cambia el estado, se ve sin recargar.
   const alCambiar = useCallback((fila: Tables<'tickets'>) => {
-    setSolicitud((actual) => actual && { ...actual, estado: fila.estado, titulo: fila.titulo })
+    setSolicitud(
+      (actual) => actual && { ...actual, estado: fila.estado, estado_desde: fila.estado_desde, recordado_en: fila.recordado_en, titulo: fila.titulo },
+    )
   }, [])
   useCambiosDelTicket(solicitud?.id, alCambiar)
 
@@ -120,7 +123,9 @@ export default function DetalleSolicitud() {
               ) : (
                 solicitud.conversacion_id && (
                   <div className="mt-6 grid gap-2 rounded-xl border bg-card p-4">
-                    <p className="text-sm text-texto-suave">Daniel te responderá aquí mismo. Si quieres añadir algo, escríbelo:</p>
+                    <p className="text-sm text-texto-suave">
+                      {seguimientoParaCliente(solicitud) ?? 'Daniel te responderá aquí mismo. Si quieres añadir algo, escríbelo:'}
+                    </p>
                     <CuadroRespuesta
                       conversacionId={solicitud.conversacion_id}
                       autor="cliente"

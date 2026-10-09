@@ -1,4 +1,4 @@
-import { ArrowLeft, Globe, Sparkles } from 'lucide-react'
+import { ArrowLeft, BellRing, Globe, Sparkles } from 'lucide-react'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import { Adjuntos } from '@/componentes/Adjuntos'
@@ -7,6 +7,7 @@ import { CuadroRespuesta } from '@/componentes/CuadroRespuesta'
 import { EtiquetaTipo, InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
 import { Label } from '@/componentes/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/componentes/ui/select'
+import { seguimientoParaAdmin } from '@/dominio/seguimiento'
 import {
   NOMBRE_CATEGORIA,
   NOMBRE_ESTADO_ADMIN,
@@ -31,6 +32,8 @@ type Ticket = Pick<
   | 'tipo'
   | 'categoria'
   | 'estado'
+  | 'estado_desde'
+  | 'recordado_en'
   | 'prioridad'
   | 'origen'
   | 'creado_en'
@@ -39,7 +42,7 @@ type Ticket = Pick<
 > & { cliente: { nombre: string } | null; web: { nombre: string; dominio: string } | null }
 
 const COLUMNAS =
-  'id, cliente_id, numero, titulo, descripcion, tipo, categoria, estado, prioridad, origen, creado_en, primera_respuesta_en, conversacion_id, cliente:clientes(nombre), web:webs!tickets_web_del_cliente(nombre, dominio)'
+  'id, cliente_id, numero, titulo, descripcion, tipo, categoria, estado, estado_desde, recordado_en, prioridad, origen, creado_en, primera_respuesta_en, conversacion_id, cliente:clientes(nombre), web:webs!tickets_web_del_cliente(nombre, dominio)'
 
 const fechaHora = new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' })
 
@@ -72,7 +75,15 @@ export default function DetalleTicket() {
   // Lo que cambie en otra pantalla (o el trigger al responder) se ve aquí al momento.
   const alCambiarEnDirecto = useCallback((fila: Tables<'tickets'>) => {
     setTicket((actual) =>
-      actual && { ...actual, estado: fila.estado, prioridad: fila.prioridad, primera_respuesta_en: fila.primera_respuesta_en, titulo: fila.titulo },
+      actual && {
+        ...actual,
+        estado: fila.estado,
+        estado_desde: fila.estado_desde,
+        recordado_en: fila.recordado_en,
+        prioridad: fila.prioridad,
+        primera_respuesta_en: fila.primera_respuesta_en,
+        titulo: fila.titulo,
+      },
     )
   }, [])
   useCambiosDelTicket(ticket?.id, alCambiarEnDirecto)
@@ -80,7 +91,9 @@ export default function DetalleTicket() {
   async function cambiar(campos: { estado?: Estado; prioridad?: Prioridad }) {
     if (!ticket) return
     const anterior = ticket
-    setTicket({ ...ticket, ...campos })
+    // Al cambiar de estado empieza a contar el seguimiento automático (el trigger hace lo mismo en la BD).
+    const reinicio = campos.estado && campos.estado !== ticket.estado ? { estado_desde: new Date().toISOString(), recordado_en: null } : {}
+    setTicket({ ...ticket, ...campos, ...reinicio })
     setErrorCambio(null)
     const { error } = await supabase.from('tickets').update(campos).eq('id', ticket.id)
     if (error) {
@@ -88,6 +101,8 @@ export default function DetalleTicket() {
       setErrorCambio('No se ha podido guardar el cambio. Prueba de nuevo.')
     }
   }
+
+  const seguimiento = ticket && seguimientoParaAdmin(ticket)
 
   return (
     <div className="grid gap-4">
@@ -192,6 +207,12 @@ export default function DetalleTicket() {
                   </SelectContent>
                 </Select>
                 {ticket.estado === 'cerrado' && <p className="text-xs text-texto-suave">Cerrado es definitivo.</p>}
+                {seguimiento && (
+                  <p className="flex gap-1.5 text-xs text-texto-suave">
+                    <BellRing aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+                    <span>{seguimiento}</span>
+                  </p>
+                )}
               </div>
               <div className="grid gap-1.5">
                 <Label htmlFor="prioridad-ticket">Prioridad</Label>

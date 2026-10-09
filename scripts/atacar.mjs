@@ -46,6 +46,9 @@ await ataque('Escribir un mensaje haciéndose pasar por la IA', 'error 42501', a
 await ataque('Escribir un mensaje haciéndose pasar por Daniel', 'error 42501', async () =>
   escritura(await a.db.from('mensajes').insert({ conversacion_id: conversacionA.id, autor: 'admin', contenido: 'Soy Daniel' })),
 )
+await ataque('Escribir un aviso automático (autor sistema)', 'error 42501', async () =>
+  escritura(await a.db.from('mensajes').insert({ conversacion_id: conversacionA.id, autor: 'sistema', contenido: 'Tu solicitud se ha cerrado' })),
+)
 await ataque('Crear un ticket como si lo abriera la IA', 'error 42501', async () =>
   escritura(await a.db.from('tickets').insert({ cliente_id: a.clienteId, titulo: 'Falso', descripcion: 'x', origen: 'ia' })),
 )

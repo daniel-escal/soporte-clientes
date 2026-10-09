@@ -72,6 +72,18 @@ describe('construirContenidos', () => {
     expect(contenidos[3].parts[0].text).toBe('Daniel (técnico): Lo miro ahora')
   })
 
+  test('los avisos automáticos no llegan al modelo', () => {
+    const contenidos = construirContenidos([
+      { autor: 'cliente', contenido: 'Sigue fallando' },
+      { autor: 'sistema', contenido: 'Se ha vuelto a abrir porque ha llegado un mensaje después de resolverla.' },
+      { autor: 'ia', contenido: '¿Qué ves exactamente?' },
+    ])
+    expect(contenidos).toEqual([
+      { role: 'user', parts: [{ text: 'Sigue fallando' }] },
+      { role: 'model', parts: [{ text: '¿Qué ves exactamente?' }] },
+    ])
+  })
+
   test('une los mensajes seguidos del mismo rol', () => {
     const contenidos = construirContenidos([
       { autor: 'cliente', contenido: 'Hola' },

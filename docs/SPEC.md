@@ -95,7 +95,7 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   | `conversacion_id` | Conversación de la que nace |
   | — | Marcas de tiempo y fecha de la primera respuesta |
 
-- Tablas `conversaciones` (estado `activa` · `resuelta_ia` · `escalada`) y `mensajes` (`autor`: `cliente` · `ia` · `admin`).
+- Tablas `conversaciones` (estado `activa` · `resuelta_ia` · `escalada`) y `mensajes` (`autor`: `cliente` · `ia` · `admin` · `sistema`). Los de `sistema` son los avisos automáticos y solo los escriben los triggers.
 - **Transiciones de estado válidas** (definidas en código y probadas):
   - `abierto` → `en_curso` | `cerrado`
   - `en_curso` → `esperando_cliente` | `resuelto`
@@ -117,6 +117,13 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - Política de subida (`privado.puede_adjuntar`): solo en la carpeta de un ticket propio que no esté cerrado, y como mucho 10 por ticket. Daniel puede subir a cualquiera.
   - Nadie borra ni sustituye fotos desde la API: no hay políticas de `update` ni de `delete`.
   - Se ven con URL firmadas que caducan en 1 hora. Cada foto subida deja un mensaje en la conversación, para que la otra parte se entere en directo.
+- **Seguimiento y cierre automáticos** (2026-10-09): que nada se quede abierto para siempre y que nadie tenga que acordarse de cerrar. Sin IA: triggers y una tarea de pg_cron.
+  - Cuando Daniel marca un ticket como resuelto, el cliente recibe un aviso: si contesta, se vuelve a abrir; si no, se cierra solo a los 3 días.
+  - Si el cliente contesta a un ticket resuelto, vuelve a "en curso", con un aviso para los dos.
+  - Esperando al cliente: un recordatorio a los 2 días. Si a los 7 no ha contestado, se da por resuelto, y 3 días después se cierra.
+  - Lo que depende del tiempo lo hace `privado.seguimiento_automatico()`, cada hora (en el minuto 7). Los tickets guardan `estado_desde` y `recordado_en`.
+  - Los avisos son textos fijos con autor `sistema`. Nunca llevan nada del cliente ni del modelo, y no se envían a Gemini.
+  - El panel enseña qué hará el sistema y cuándo ("Se cerrará sola el lunes 12 de octubre si el cliente no contesta"). El cliente ve qué pasa si contesta.
 - Criterios de aceptación:
   - [ ] El cliente ve la lista y el detalle de **sus** incidencias y peticiones, con la conversación completa.
   - [ ] Solo el administrador cambia el estado o la prioridad, y solo con transiciones válidas.
@@ -124,6 +131,7 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - [ ] El cliente puede abrir una incidencia o una petición a mano si la IA no está disponible (plan B).
   - [ ] El cliente no puede fijar la prioridad ni por el formulario ni contra la API (test de RLS).
   - [ ] El cliente y Daniel añaden fotos a una solicitud abierta y la otra parte las ve sin recargar. Nadie ve las de otro cliente (test de RLS).
+  - [ ] Un ticket resuelto se reabre si el cliente contesta y, si no, se cierra solo a los 3 días. Esperando al cliente, se le recuerda y a la semana se da por resuelto (test SQL `seguimiento.sql`).
 
 ### `asistente`
 

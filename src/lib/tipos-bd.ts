@@ -181,11 +181,13 @@ export type Database = {
           creado_en: string
           descripcion: string
           estado: Database["public"]["Enums"]["estado_ticket"]
+          estado_desde: string
           id: string
           numero: number
           origen: Database["public"]["Enums"]["origen_ticket"]
           primera_respuesta_en: string | null
           prioridad: Database["public"]["Enums"]["prioridad"]
+          recordado_en: string | null
           resumen_ia: string | null
           tipo: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
@@ -199,11 +201,13 @@ export type Database = {
           creado_en?: string
           descripcion: string
           estado?: Database["public"]["Enums"]["estado_ticket"]
+          estado_desde?: string
           id?: string
           numero?: never
           origen: Database["public"]["Enums"]["origen_ticket"]
           primera_respuesta_en?: string | null
           prioridad?: Database["public"]["Enums"]["prioridad"]
+          recordado_en?: string | null
           resumen_ia?: string | null
           tipo?: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
@@ -217,11 +221,13 @@ export type Database = {
           creado_en?: string
           descripcion?: string
           estado?: Database["public"]["Enums"]["estado_ticket"]
+          estado_desde?: string
           id?: string
           numero?: never
           origen?: Database["public"]["Enums"]["origen_ticket"]
           primera_respuesta_en?: string | null
           prioridad?: Database["public"]["Enums"]["prioridad"]
+          recordado_en?: string | null
           resumen_ia?: string | null
           tipo?: Database["public"]["Enums"]["tipo_ticket"]
           titulo?: string
@@ -303,11 +309,13 @@ export type Database = {
           creado_en: string
           descripcion: string
           estado: Database["public"]["Enums"]["estado_ticket"]
+          estado_desde: string
           id: string
           numero: number
           origen: Database["public"]["Enums"]["origen_ticket"]
           primera_respuesta_en: string | null
           prioridad: Database["public"]["Enums"]["prioridad"]
+          recordado_en: string | null
           resumen_ia: string | null
           tipo: Database["public"]["Enums"]["tipo_ticket"]
           titulo: string
@@ -326,7 +334,7 @@ export type Database = {
       }
     }
     Enums: {
-      autor: "cliente" | "ia" | "admin"
+      autor: "cliente" | "ia" | "admin" | "sistema"
       categoria:
         | "web_caida"
         | "error_funcional"
@@ -474,7 +482,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      autor: ["cliente", "ia", "admin"],
+      autor: ["cliente", "ia", "admin", "sistema"],
       categoria: [
         "web_caida",
         "error_funcional",

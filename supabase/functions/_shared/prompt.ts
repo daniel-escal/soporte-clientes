@@ -6,7 +6,7 @@ export const MAX_HISTORIAL = 20
 
 export type WebCliente = { id: string; nombre: string; dominio: string }
 export type EntradaFaq = { id: string; pregunta: string; respuesta: string; categoria: string }
-export type MensajeHistorial = { autor: 'cliente' | 'ia' | 'admin'; contenido: string }
+export type MensajeHistorial = { autor: 'cliente' | 'ia' | 'admin' | 'sistema'; contenido: string }
 export type Contenido = { role: 'user' | 'model'; parts: { text: string }[] }
 
 export function construirInstrucciones({ webs, faq }: { webs: WebCliente[]; faq: EntradaFaq[] }): string {
@@ -49,10 +49,14 @@ Base de conocimiento:
 ${listaFaq}`
 }
 
-/** Historial → turnos de Gemini. Une los mensajes seguidos del mismo rol y se queda con los últimos. */
+/**
+ * Historial → turnos de Gemini. Une los mensajes seguidos del mismo rol y se queda con los últimos.
+ * Los avisos automáticos ('sistema') no se envían: no los dijo nadie de la conversación.
+ */
 export function construirContenidos(historial: MensajeHistorial[]): Contenido[] {
   const contenidos: Contenido[] = []
   for (const mensaje of historial.slice(-MAX_HISTORIAL)) {
+    if (mensaje.autor === 'sistema') continue
     const role = mensaje.autor === 'cliente' ? 'user' : 'model'
     const texto = mensaje.autor === 'admin' ? `Daniel (técnico): ${mensaje.contenido}` : mensaje.contenido
     const anterior = contenidos.at(-1)

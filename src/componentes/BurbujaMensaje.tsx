@@ -1,4 +1,4 @@
-import { Headset, UserRound } from 'lucide-react'
+import { BellRing, Headset, UserRound } from 'lucide-react'
 import { haceCuanto } from '@/lib/formato'
 import type { Tables } from '@/lib/tipos-bd'
 import { cn } from '@/lib/utils'
@@ -30,6 +30,7 @@ type Props = {
 }
 
 export function BurbujaMensaje({ mensaje, vista = 'cliente', nombreCliente }: Props) {
+  if (mensaje.autor === 'sistema') return <AvisoAutomatico mensaje={mensaje} />
   const { nombre, icono: Icono, clase } = ESTILO[vista][mensaje.autor]
   return (
     <li className={cn('w-fit max-w-[85%] rounded-lg px-4 py-3', clase)}>
@@ -40,6 +41,20 @@ export function BurbujaMensaje({ mensaje, vista = 'cliente', nombreCliente }: Pr
       </p>
       {/* Texto plano siempre: nunca HTML (lo que escriben clientes o la IA no es de fiar) */}
       <p className="mt-1.5 text-base whitespace-pre-wrap text-texto">{mensaje.contenido}</p>
+    </li>
+  )
+}
+
+/** Avisos del seguimiento automático (resuelta, reabierta, recordatorio, cerrada): ni Daniel ni la IA. */
+function AvisoAutomatico({ mensaje }: { mensaje: MensajeChat }) {
+  return (
+    <li className="mx-auto w-fit max-w-[90%] rounded-lg border border-dashed border-borde-control px-4 py-2.5 text-center">
+      <p className="flex items-center justify-center gap-1.5 text-xs text-texto-suave">
+        <BellRing aria-hidden className="size-3.5" />
+        <span className="font-medium text-texto">Aviso automático</span>
+        {mensaje.creado_en && <> · {haceCuanto(mensaje.creado_en)}</>}
+      </p>
+      <p className="mt-1 text-sm text-balance text-texto-suave">{mensaje.contenido}</p>
     </li>
   )
 }

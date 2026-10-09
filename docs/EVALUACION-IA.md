@@ -6,7 +6,7 @@ Fecha: 2026-10-09 · Asistente: Edge Function `asistente` v8 · Modelos: cadena 
 
 | Prueba | Resultado | Criterio de la spec |
 | --- | --- | --- |
-| Ataques a la API, a RLS y a Storage (sin Gemini) | **27/27 bloqueados** | — |
+| Ataques a la API, a RLS y a Storage (sin Gemini) | **28/28 bloqueados** | — |
 | Ataques de inyección de prompt (con Gemini) | **7/7 sin efecto** | Los 3 ataques documentados fallan |
 | Conversaciones funcionales | **10/10** (9/10 en la primera pasada; se corrigió el prompt) | ≥ 9/10 |
 | Mediana de respuesta del asistente | **2,2 s** | ≤ 6 s |
@@ -15,7 +15,7 @@ Para no gastar la cuota gratuita de Google, la mayor parte de la evaluación de 
 
 ## Cómo repetirla
 
-- `node scripts/atacar.mjs`: los 27 ataques a la API, a RLS y a Storage. No gasta cuota de Gemini.
+- `node scripts/atacar.mjs`: los 28 ataques a la API, a RLS y a Storage. No gasta cuota de Gemini.
 - `node scripts/evaluar-ia.mjs`: los 6 ataques de prompt y las 10 conversaciones (unas 17 llamadas a Gemini). Con ids como argumentos solo repite esos casos, por ejemplo `node scripts/evaluar-ia.mjs F1 F10`.
 - Resultados en bruto: `docs/evaluacion/resultados.json`, y las repeticiones en `resultados-repeticion-*.json`.
 - Tests SQL de RLS: `supabase/tests/*.sql`.
@@ -33,26 +33,27 @@ Dos visitantes de la demo reales, con sesiones anónimas: A (el atacante) y B (l
 | 5 | Escribir en la conversación de otro cliente | Rechazado (42501) |
 | 6 | Escribir un mensaje como si fuera la IA | Rechazado (42501) |
 | 7 | Escribir un mensaje como si fuera Daniel | Rechazado (42501) |
-| 8 | Crear un ticket como si lo abriera la IA | Rechazado (42501) |
-| 9 | Crear un ticket con prioridad urgente | Rechazado (42501): la prioridad no la elige el cliente |
-| 10 | Crear un ticket a nombre de otro cliente | Rechazado (42501) |
-| 11 | Abrir una incidencia con la web de otro cliente | Rechazado (23503, clave foránea compuesta) |
-| 12 | Cambiar el estado de un ticket | Sin efecto: solo puede el admin |
-| 13 | Subirse el rol a administrador | Sin efecto |
-| 14 | Marcar como resuelta la conversación de otro cliente | `false` |
-| 15 | Storage: subir una foto a la carpeta de otro cliente | Rechazado (política por carpeta) |
-| 16 | Storage: subir HTML con un script | Rechazado: el bucket solo admite JPG, PNG y WebP |
-| 17 | Storage: subir un SVG con un script | Rechazado (mismo motivo) |
-| 18 | Storage: subir una imagen de 6 MB | Rechazado: el límite del bucket es 5 MB |
-| 19 | Storage: listar los adjuntos de otro cliente | 0 archivos |
-| 20 | Storage: pedir una URL firmada de un adjunto ajeno | Rechazado |
-| 21 | Storage: borrar un adjunto ajeno | Sin efecto: el archivo sigue ahí |
-| 22 | Asistente: seguir la conversación de otro cliente | 404 antes de llamar a Gemini |
-| 23 | Asistente: mensaje de 5000 caracteres | 422 antes de llamar a Gemini |
-| 24 | Asistente: cuerpo fuera del contrato (con `cliente_id` de otro) | 422: zod lo rechaza |
-| 25 | Asistente: sin sesión | 401 (el gateway exige el JWT) |
-| 26 | Asistente: con un token inventado | 401 |
-| 27 | Asistente: CORS desde un origen ajeno | El origen no se permite |
+| 8 | Escribir un aviso automático (autor `sistema`) | Rechazado (42501): solo los escriben los triggers |
+| 9 | Crear un ticket como si lo abriera la IA | Rechazado (42501) |
+| 10 | Crear un ticket con prioridad urgente | Rechazado (42501): la prioridad no la elige el cliente |
+| 11 | Crear un ticket a nombre de otro cliente | Rechazado (42501) |
+| 12 | Abrir una incidencia con la web de otro cliente | Rechazado (23503, clave foránea compuesta) |
+| 13 | Cambiar el estado de un ticket | Sin efecto: solo puede el admin |
+| 14 | Subirse el rol a administrador | Sin efecto |
+| 15 | Marcar como resuelta la conversación de otro cliente | `false` |
+| 16 | Storage: subir una foto a la carpeta de otro cliente | Rechazado (política por carpeta) |
+| 17 | Storage: subir HTML con un script | Rechazado: el bucket solo admite JPG, PNG y WebP |
+| 18 | Storage: subir un SVG con un script | Rechazado (mismo motivo) |
+| 19 | Storage: subir una imagen de 6 MB | Rechazado: el límite del bucket es 5 MB |
+| 20 | Storage: listar los adjuntos de otro cliente | 0 archivos |
+| 21 | Storage: pedir una URL firmada de un adjunto ajeno | Rechazado |
+| 22 | Storage: borrar un adjunto ajeno | Sin efecto: el archivo sigue ahí |
+| 23 | Asistente: seguir la conversación de otro cliente | 404 antes de llamar a Gemini |
+| 24 | Asistente: mensaje de 5000 caracteres | 422 antes de llamar a Gemini |
+| 25 | Asistente: cuerpo fuera del contrato (con `cliente_id` de otro) | 422: zod lo rechaza |
+| 26 | Asistente: sin sesión | 401 (el gateway exige el JWT) |
+| 27 | Asistente: con un token inventado | 401 |
+| 28 | Asistente: CORS desde un origen ajeno | El origen no se permite |
 
 También se comprobó el **límite de uso** (`scripts/probar-limite.mjs`): con 30 mensajes en la última hora, el siguiente recibe 429 y no se llama a Gemini.
 
@@ -103,5 +104,6 @@ En los peores casos, cuando el segundo modelo también tardaba, la respuesta lle
 ## 5. Riesgos aceptados
 
 - **Acceso anónimo de la demo:** cualquiera puede crear un cliente de demo. Lo frenan los límites de Supabase (por IP) y los nuestros (30 mensajes por hora por cliente y 200 globales). Captcha: anotado como mejora.
+- **Avisos del advisor sobre `cron.job` y `cron.job_run_details`:** son las políticas que trae pg_cron (cada rol solo ve sus tareas). Ni `anon` ni `authenticated` tienen acceso al esquema `cron`, y la API no lo expone.
 - **`marcar_resuelta_ia` es SECURITY DEFINER a propósito** (aviso 0029 del advisor revisado). Solo cambia conversaciones del propio cliente, activas y con respuesta de la IA (`supabase/tests/rls_resuelta_ia.sql`).
 - **La IA puede equivocarse al clasificar.** Daniel ve y corrige la prioridad y el estado desde el panel. El cliente no ve la prioridad.

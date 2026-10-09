@@ -85,7 +85,7 @@ T13 Guion y ensayo de la demo                       ← T12
 
 ### Mejoras propuestas (viernes 9; se revierten si Daniel no las quiere)
 - [x] M1 (importante): fotos y capturas en incidencias y peticiones (Supabase Storage privado, en directo)
-- [ ] M2 (media): seguimiento y cierre automáticos (aviso al resolver, reapertura si el cliente contesta, recordatorio y cierre por tiempo con pg_cron, sin IA)
+- [x] M2 (media): seguimiento y cierre automáticos (aviso al resolver, reapertura si el cliente contesta, recordatorio y cierre por tiempo con pg_cron, sin IA)
 
 ### Fase 4: Demo (lunes 12)
 - [ ] T12: Datos de demostración y verificación completa de los 12 criterios
