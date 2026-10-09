@@ -104,6 +104,7 @@ En los peores casos, cuando el segundo modelo también tardaba, la respuesta lle
 ## 5. Riesgos aceptados
 
 - **Acceso anónimo de la demo:** cualquiera puede crear un cliente de demo. Lo frenan los límites de Supabase (por IP) y los nuestros (30 mensajes por hora por cliente y 200 globales). Captcha: anotado como mejora.
+- **Protección de contraseñas filtradas desactivada:** en Supabase solo existe en el plan Pro. La única cuenta con contraseña es la del administrador, y tiene que ser larga y única. Los clientes de la demo entran sin contraseña.
 - **Avisos del advisor sobre `cron.job` y `cron.job_run_details`:** son las políticas que trae pg_cron (cada rol solo ve sus tareas). Ni `anon` ni `authenticated` tienen acceso al esquema `cron`, y la API no lo expone.
 - **`marcar_resuelta_ia` es SECURITY DEFINER a propósito** (aviso 0029 del advisor revisado). Solo cambia conversaciones del propio cliente, activas y con respuesta de la IA (`supabase/tests/rls_resuelta_ia.sql`).
 - **La IA puede equivocarse al clasificar.** Daniel ve y corrige la prioridad y el estado desde el panel. El cliente no ve la prioridad.
