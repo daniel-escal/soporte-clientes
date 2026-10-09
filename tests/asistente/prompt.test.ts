@@ -37,6 +37,10 @@ describe('construirInstrucciones', () => {
     expect(instrucciones).toMatch(/No le digas la prioridad/)
   })
 
+  test('primero el paso de la FAQ; nunca abrir incidencia y a la vez pedir una comprobación (evaluación F1)', () => {
+    expect(instrucciones).toMatch(/Nunca abras una incidencia y a la vez le pidas que compruebe algo/)
+  })
+
   test('distingue las peticiones de cambio: los clientes no modifican su web', () => {
     expect(instrucciones).toMatch(/no pueden modificar su web/)
     expect(instrucciones).toContain('"cambio_contenido"')

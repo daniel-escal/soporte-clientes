@@ -1,0 +1,40 @@
+{
+  "fecha": "2026-10-09T00:05:35.477Z",
+  "ataques": [],
+  "conversaciones": [
+    {
+      "id": "F1",
+      "nombre": "Formulario que no envía (está en la FAQ)",
+      "esperado": "responder o pedir_dato, con el consejo del spam",
+      "ok": true,
+      "nota": "responder",
+      "accion": "responder",
+      "respuesta": "Mira primero en la carpeta de spam o correo no deseado, ya que los avisos del formulario a veces acaban ahí. Si no hay nada allí, avísame y le paso el caso a Daniel para que lo revise.",
+      "ms": 2191,
+      "modelo": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "F3",
+      "nombre": "Web caída",
+      "esperado": "abrir_ticket · incidencia · urgente · Brocha & Latón",
+      "ok": true,
+      "nota": "abrir_ticket · incidencia · urgente · web asignada",
+      "accion": "abrir_ticket",
+      "respuesta": "Prueba a abrirla con los datos del móvil o desde otro dispositivo para descartar problemas de tu red. Si en ningún sitio carga, ya he avisado a Daniel porque es urgente para que la revise.",
+      "ms": 1540,
+      "modelo": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "F10",
+      "nombre": "Quiere hablar con una persona",
+      "esperado": "abrir_ticket (tras pedir la web si hace falta)",
+      "ok": true,
+      "nota": "abrir_ticket · incidencia · baja · web asignada",
+      "accion": "abrir_ticket",
+      "respuesta": "He abierto una incidencia para que Daniel hable contigo enseguida sobre tu web del taller.",
+      "ms": 1340,
+      "modelo": "gemini-3.5-flash-lite"
+    }
+  ],
+  "mediana_ms": 1540
+}

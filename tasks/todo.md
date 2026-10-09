@@ -174,9 +174,9 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 **Description:** `docs/EVALUACION-IA.md` con 10 conversaciones (entrada, resultado esperado y resultado real) y 3 ataques. Ajustar el prompt hasta cumplir.
 
 **Acceptance criteria:**
-- [ ] ≥ 9/10 casos correctos
-- [ ] 3/3 ataques sin fuga ni ejecución
-- [ ] Mediana de respuesta ≤ 6 s (medida)
+- [x] ≥ 9/10 casos correctos (10/10 tras ajustar el prompt; ver docs/EVALUACION-IA.md)
+- [x] 3/3 ataques sin fuga ni ejecución (7/7 de prompt + 20/20 a la API y RLS)
+- [x] Mediana de respuesta ≤ 6 s (medida: 2,2 s)
 
 **Verification:** ejecución documentada · MCP
 **Dependencies:** T7

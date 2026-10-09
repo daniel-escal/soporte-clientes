@@ -68,7 +68,7 @@ T13 Guion y ensayo de la demo                       ← T12
 - [x] T6: Asistente: Edge Function con Gemini, chat con el orbe (responder y pedir dato)
 - [x] T7: Asistente: escalar a ticket, FAQ inicial, límites de uso y plan B
 - [x] T7b: Peticiones de cambio y prioridad decidida por la IA (añadida el 09/10 a petición de Daniel)
-- [ ] T8: Evaluación de la IA: 10 conversaciones + 3 ataques
+- [x] T8: Evaluación de la IA: 10 conversaciones + 3 ataques (ampliada a 27 ataques)
 
 ### Checkpoint 2: la IA funciona
 - [ ] ≥ 9/10 casos y 3/3 ataques bloqueados; mediana ≤ 6 s
