@@ -86,10 +86,12 @@ Se ejecutan con el MCP de Supabase y se deshacen al terminar.
 
 ## Antes de la demo (martes 13)
 
-1. **Volver a ejecutar `supabase/seed.sql`** esa misma mañana. Por qué:
+1. **Los datos se renuevan solos a las 7:00.** La tarea `renovar-demo-martes` de pg_cron ejecuta `privado.sembrar_demo()` y después se borra. Por qué hace falta:
    - las fechas son relativas al momento de ejecutarlo;
    - si no, el #103 se daría por resuelto solo ese mismo día;
    - además borra lo que dejan las pruebas: `test:rls`, `atacar.mjs` y las visitas crean clientes de demostración.
-2. **No lanzar `test:rls` ni `atacar.mjs` después del seed.** Si hace falta, volver a ejecutar el seed.
-3. **Comprobar que el proyecto de Supabase no está en pausa** (plan gratuito) y que la tarea `seguimiento-tickets` de pg_cron sigue activa.
-4. **Entrar en `/admin/entrar` con su cuenta** de administrador antes de empezar.
+2. **Si la reunión es tarde, o tras ensayar, volver a lanzarlo justo antes:** `select privado.sembrar_demo();` en el editor SQL de Supabase (o `supabase/seed.sql`). Así el #110 dirá "hace 14 minutos".
+3. **No lanzar `test:rls` ni `atacar.mjs` después.** Si hace falta, volver a lanzar la función.
+4. **Abrir las sesiones de demostración después de renovar los datos.** La función borra las sesiones anónimas, y una sesión abierta antes deja de funcionar ("Salir" y volver a entrar).
+5. **Comprobar que el proyecto de Supabase no está en pausa** (plan gratuito) y que las tareas de pg_cron siguen activas.
+6. **Entrar en `/admin/entrar` con su cuenta** de administrador antes de empezar.

@@ -267,8 +267,10 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Comprobar que Supabase sigue activo.
 
 **Acceptance criteria:**
-- [ ] Guion ensayado de principio a fin con la URL pública
-- [ ] Plan B preparado
+- [x] Guion escrito: presentación de 5 minutos dentro del plan de proyecto en PDF (fuera del repo)
+- [ ] Guion ensayado de principio a fin con la URL pública (lunes 12)
+- [x] Plan B preparado: formulario si la IA falla y capturas en el PDF por si no hay conexión
+- [x] Datos de demostración renovados solos el martes a las 7:00 (`privado.sembrar_demo()` con pg_cron)
 
 **Dependencies:** T12
 **Files:** `docs/GUION-DEMO.md`

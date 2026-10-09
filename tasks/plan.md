@@ -89,7 +89,7 @@ T13 Guion y ensayo de la demo                       ← T12
 
 ### Fase 4: Demo (lunes 12)
 - [x] T12: Datos de demostración y verificación completa de los 12 criterios (10/12; faltan la aprobación de la estética y el ensayo, ver `docs/VERIFICACION.md`)
-- [ ] T13: Guion de 5 minutos, ensayo y plan B sin conexión
+- [ ] T13: Guion de 5 minutos, ensayo y plan B sin conexión (guion, plan B y capturas hechos en el plan de proyecto en PDF, fuera del repo; falta el ensayo del lunes)
 
 ### Checkpoint final
 - [ ] Los 12 criterios de éxito con evidencia en `docs/VERIFICACION.md`
