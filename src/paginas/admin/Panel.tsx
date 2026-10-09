@@ -27,9 +27,11 @@ export default function Panel() {
   return (
     <div className="min-h-svh text-sm">
       <header className="flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-6">
-        <Link to="/admin" className="flex items-center gap-3" aria-label="Panel de soporte: bandeja">
+        {/* El nombre accesible empieza por el texto visible (WCAG 2.5.3): se puede activar diciendo lo que se ve */}
+        <Link to="/admin" className="flex items-center gap-3">
           <Marca />
           <span className="rounded-full bg-superficie-alta px-2.5 py-0.5 text-xs font-medium text-texto-suave">Panel</span>
+          <span className="sr-only">: ir a la bandeja</span>
         </Link>
         <div className="flex items-center gap-2">
           <span className="hidden truncate text-texto-suave sm:inline">{sesion?.user.email}</span>

@@ -112,7 +112,7 @@ export default function Portal() {
               {webs.length === 0 ? (
                 <p className="mt-4 text-texto-suave">Todavía no tienes webs dadas de alta.</p>
               ) : (
-                <ul className="mt-4 grid gap-2">
+                <ul className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-2">
                   {webs.map((web) => (
                     <li key={web.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
                       <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-superficie-alta">
