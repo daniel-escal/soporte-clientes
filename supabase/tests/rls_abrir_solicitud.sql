@@ -5,7 +5,6 @@
 --   · cambio_contenido y nuevo_componente → prioridad baja, tipo peticion;
 --   · categoría que no puede elegir el cliente → 22023; web de B → 23503; título corto → 23514;
 --   · contra la API: prioridad urgente, categoría web_caida u origen 'ia' → bloqueado por RLS (42501);
---   · compatibilidad: abrir_incidencia ignora la prioridad que le pasen (queda en media);
 --   · sin sesión → 42501.
 
 create or replace function pg_temp.intentar(consulta text) returns text
@@ -26,7 +25,7 @@ declare
   a constant uuid := '00000000-0000-4000-8000-00000000000a';
   b constant uuid := '00000000-0000-4000-8000-00000000000b';
   cliente_a uuid; web_a uuid; web_b uuid; resultado jsonb;
-  incidencia record; cambio record; nuevo record; compat record; mensajes_hilo bigint;
+  incidencia record; cambio record; nuevo record; mensajes_hilo bigint;
 begin
   begin
     insert into auth.users (id, aud, role, is_anonymous, created_at, updated_at) values
@@ -42,14 +41,12 @@ begin
     select * into incidencia from public.abrir_solicitud('El formulario no envía', 'Desde ayer el formulario de contacto no llega', 'otro', web_a);
     select * into cambio from public.abrir_solicitud('Cambiar el horario', 'Ahora abrimos a las 9', 'cambio_contenido', web_a);
     select * into nuevo from public.abrir_solicitud('Añadir una galería', 'Quiero una galería con fotos del local', 'nuevo_componente', null);
-    select * into compat from public.abrir_incidencia('Prueba de compatibilidad', 'El cliente antiguo aún manda prioridad', 'urgente', null);
     select count(*) into mensajes_hilo from public.mensajes where conversacion_id = incidencia.conversacion_id;
 
     resultado := jsonb_build_object(
       'incidencia', jsonb_build_object('prioridad', incidencia.prioridad, 'tipo', incidencia.tipo, 'origen', incidencia.origen, 'estado', incidencia.estado, 'mensajes_en_hilo', mensajes_hilo),
       'cambio_contenido', jsonb_build_object('prioridad', cambio.prioridad, 'tipo', cambio.tipo),
       'nuevo_componente', jsonb_build_object('prioridad', nuevo.prioridad, 'tipo', nuevo.tipo),
-      'compatibilidad_ignora_prioridad', compat.prioridad,
       'categoria_no_permitida', pg_temp.intentar('select public.abrir_solicitud(''La web no carga'', ''x'', ''web_caida'', null)'),
       'con_web_de_B', pg_temp.intentar(format('select public.abrir_solicitud(''Ajena'', ''x'', ''otro'', %L)', web_b)),
       'titulo_demasiado_corto', pg_temp.intentar('select public.abrir_solicitud(''x'', ''descripcion'', ''otro'', null)'),

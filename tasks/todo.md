@@ -162,7 +162,7 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 
 **Acceptance criteria:**
 - [x] `tipo` (incidencia o petición) generado a partir de la categoría, con la nueva categoría `nuevo_componente`
-- [x] El formulario no pide la urgencia (incidencia → media, petición → baja) y RLS rechaza otra prioridad contra la API (`supabase/tests/rls_abrir_solicitud.sql`, 13 casos)
+- [x] El formulario no pide la urgencia (incidencia → media, petición → baja) y RLS rechaza otra prioridad contra la API (`supabase/tests/rls_abrir_solicitud.sql`, 12 casos tras quitar el de compatibilidad)
 - [x] La IA clasifica las peticiones y decide la prioridad aunque el cliente diga que es urgente, sin comunicársela
 - [x] El cliente ve el tipo y el estado, no la prioridad
 - [x] Borrar el envoltorio temporal `abrir_incidencia` cuando el frontend nuevo esté publicado
@@ -252,7 +252,7 @@ Plan: [`plan.md`](plan.md) · Spec: [`../docs/SPEC.md`](../docs/SPEC.md) · Est�
 - Verificación de los 12 criterios en `docs/VERIFICACION.md`: Lighthouse, responsive, teclado, consola, búsqueda de claves en `dist/` y RLS.
 
 **Acceptance criteria:**
-- [ ] Los 12 criterios de éxito, con evidencia
+- [x] Los 12 criterios de éxito, con evidencia (`docs/VERIFICACION.md`: 10 cumplidos; la aprobación de la estética y el ensayo dependen de Daniel y del lunes)
 
 **Dependencies:** T11
 **Files:** `supabase/seed.sql`, `docs/VERIFICACION.md` (+ arreglos)

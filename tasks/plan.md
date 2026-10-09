@@ -88,7 +88,7 @@ T13 Guion y ensayo de la demo                       ← T12
 - [x] M2 (media): seguimiento y cierre automáticos (aviso al resolver, reapertura si el cliente contesta, recordatorio y cierre por tiempo con pg_cron, sin IA)
 
 ### Fase 4: Demo (lunes 12)
-- [ ] T12: Datos de demostración y verificación completa de los 12 criterios
+- [x] T12: Datos de demostración y verificación completa de los 12 criterios (10/12; faltan la aprobación de la estética y el ensayo, ver `docs/VERIFICACION.md`)
 - [ ] T13: Guion de 5 minutos, ensayo y plan B sin conexión
 
 ### Checkpoint final
