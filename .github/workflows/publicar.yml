@@ -39,8 +39,13 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
-      # SPA en GitHub Pages: las rutas profundas (/soporte-clientes/portal) caen en 404.html, que es la propia app.
-      - run: cp dist/index.html dist/404.html
+      # SPA en GitHub Pages: las rutas profundas caen en 404.html, que es la propia app (pero con estado 404).
+      # Las rutas fijas se copian como carpetas para que respondan 200 (enlaces directos, recargas y Lighthouse).
+      - run: |
+          cp dist/index.html dist/404.html
+          for ruta in portal admin admin/entrar admin/faq; do
+            mkdir -p "dist/$ruta" && cp dist/index.html "dist/$ruta/index.html"
+          done
 
       - uses: actions/configure-pages@v6
 
