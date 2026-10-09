@@ -83,6 +83,10 @@ T13 Guion y ensayo de la demo                       ← T12
 - [ ] Cliente → IA → ticket → panel → respuesta → cliente, en dos pantallas y sin recargar
 - [ ] Revisión con Daniel y push
 
+### Mejoras propuestas (viernes 9; se revierten si Daniel no las quiere)
+- [x] M1 (importante): fotos y capturas en incidencias y peticiones (Supabase Storage privado, en directo)
+- [ ] M2 (media): seguimiento y cierre automáticos (aviso al resolver, reapertura si el cliente contesta, recordatorio y cierre por tiempo con pg_cron, sin IA)
+
 ### Fase 4: Demo (lunes 12)
 - [ ] T12: Datos de demostración y verificación completa de los 12 criterios
 - [ ] T13: Guion de 5 minutos, ensayo y plan B sin conexión
@@ -97,7 +101,7 @@ T13 Guion y ensayo de la demo                       ← T12
 | --- | --- | --- |
 | Activar el inicio de sesión anónimo en Supabase | Verificar la T3 en el navegador y los tests de la T4 | En cuanto exista el proyecto (lo aviso) |
 | Crear la clave de Gemini en AI Studio y guardarla como secreto `GEMINI_API_KEY` | T6 | Antes del viernes por la tarde |
-| Crear su usuario administrador (email y contraseña) | T9 | Antes del domingo |
+| Crear su usuario administrador (email y contraseña) | T9 | Hecho el viernes 9 (rol asignado con SQL) |
 
 ## Riesgos y mitigaciones
 

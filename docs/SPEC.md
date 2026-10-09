@@ -111,12 +111,19 @@ Orden de construcción: `identidad` → `webs` → `tickets` → `asistente` →
   - Lo que el cliente abre a mano entra con una prioridad fija: `media` si es una incidencia y `baja` si es una petición. Daniel la reclasifica desde el panel.
   - El formulario no pide la urgencia, y además RLS rechaza cualquier otra prioridad aunque se envíe a mano contra la API.
   - El cliente no ve la prioridad: es un dato interno de triaje y un "baja" visible solo genera fricción. Ve el tipo y el estado.
+- **Fotos y capturas** (2026-10-09): una captura del error o las fotos nuevas para la web ahorran idas y venidas.
+  - Bucket privado `adjuntos` de Supabase Storage. Ruta `{cliente}/{ticket}/{id aleatorio}.{ext}`, con la extensión sacada del tipo MIME y no del nombre del archivo.
+  - El propio bucket solo admite JPG, PNG y WebP de hasta 5 MB. Así se descartan el HTML y el SVG, que podrían llevar scripts.
+  - Política de subida (`privado.puede_adjuntar`): solo en la carpeta de un ticket propio que no esté cerrado, y como mucho 10 por ticket. Daniel puede subir a cualquiera.
+  - Nadie borra ni sustituye fotos desde la API: no hay políticas de `update` ni de `delete`.
+  - Se ven con URL firmadas que caducan en 1 hora. Cada foto subida deja un mensaje en la conversación, para que la otra parte se entere en directo.
 - Criterios de aceptación:
   - [ ] El cliente ve la lista y el detalle de **sus** incidencias y peticiones, con la conversación completa.
   - [ ] Solo el administrador cambia el estado o la prioridad, y solo con transiciones válidas.
   - [ ] Una respuesta del administrador llega al cliente sin recargar.
   - [ ] El cliente puede abrir una incidencia o una petición a mano si la IA no está disponible (plan B).
   - [ ] El cliente no puede fijar la prioridad ni por el formulario ni contra la API (test de RLS).
+  - [ ] El cliente y Daniel añaden fotos a una solicitud abierta y la otra parte las ve sin recargar. Nadie ve las de otro cliente (test de RLS).
 
 ### `asistente`
 
@@ -214,7 +221,6 @@ Se cuentan en la demo como "siguientes pasos":
 
 - Bot de Telegram y widget para incrustar en las webs de los clientes
 - Correos automáticos al cliente (Resend) e inicio de sesión de clientes reales por enlace mágico (requiere SMTP propio)
-- Adjuntar capturas de pantalla (Supabase Storage)
 - Búsqueda por similitud en la FAQ (pgvector)
 - Varios administradores o técnicos, y asignación automática
 - Pagos y facturación
@@ -348,6 +354,7 @@ export function puedeCambiar(de: Estado, a: Estado): boolean {
   - los mensajes del cliente;
   - **la salida del modelo**;
   - el cuerpo de las peticiones a la Edge Function;
+  - los archivos que se suben;
   - las sesiones anónimas de la demo pública.
 - **Lo que hay que proteger:**
   - los datos de cada cliente;
@@ -366,6 +373,7 @@ export function puedeCambiar(de: Estado, a: Estado): boolean {
   - validación con zod;
   - pintar el texto como texto;
   - límites por usuario y globales;
+  - Storage privado, con tipos y tamaño limitados en el bucket y una política por carpeta;
   - la clave de Gemini solo como secreto de la Edge Function.
 
 ## Límites
@@ -425,5 +433,5 @@ export function puedeCambiar(de: Estado, a: Estado): boolean {
 ## Pasos que solo puede hacer Daniel
 
 - Crear la clave de la API de Gemini en Google AI Studio y guardarla como secreto `GEMINI_API_KEY` en el proyecto de Supabase.
-- Crear su usuario administrador (email y contraseña) en el panel de Supabase. Después se le asigna el rol con SQL.
+- Crear su usuario administrador (email y contraseña) en el panel de Supabase. Después se le asigna el rol con SQL. *(Hecho el 2026-10-09: rol `admin` y sin cliente asociado.)*
 - Activar el inicio de sesión anónimo en Supabase (Authentication → Sign In / Providers), si no se puede hacer por API.

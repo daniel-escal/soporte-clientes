@@ -1,6 +1,7 @@
 import { ArrowLeft, Globe, Sparkles } from 'lucide-react'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
+import { Adjuntos } from '@/componentes/Adjuntos'
 import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
 import { CuadroRespuesta } from '@/componentes/CuadroRespuesta'
 import { EtiquetaTipo, InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
@@ -23,6 +24,7 @@ import type { Tables } from '@/lib/tipos-bd'
 type Ticket = Pick<
   Tables<'tickets'>,
   | 'id'
+  | 'cliente_id'
   | 'numero'
   | 'titulo'
   | 'descripcion'
@@ -37,7 +39,7 @@ type Ticket = Pick<
 > & { cliente: { nombre: string } | null; web: { nombre: string; dominio: string } | null }
 
 const COLUMNAS =
-  'id, numero, titulo, descripcion, tipo, categoria, estado, prioridad, origen, creado_en, primera_respuesta_en, conversacion_id, cliente:clientes(nombre), web:webs!tickets_web_del_cliente(nombre, dominio)'
+  'id, cliente_id, numero, titulo, descripcion, tipo, categoria, estado, prioridad, origen, creado_en, primera_respuesta_en, conversacion_id, cliente:clientes(nombre), web:webs!tickets_web_del_cliente(nombre, dominio)'
 
 const fechaHora = new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' })
 
@@ -128,6 +130,18 @@ export default function DetalleTicket() {
                 </div>
               )}
             </header>
+
+            <div className="rounded-xl border bg-card p-5 shadow-tarjeta">
+              <Adjuntos
+                clienteId={ticket.cliente_id}
+                ticketId={ticket.id}
+                puedeSubir={ticket.estado !== 'cerrado'}
+                conversacionId={ticket.conversacion_id}
+                autor="admin"
+                version={mensajes?.length}
+                onMensaje={(mensaje) => anadir([mensaje])}
+              />
+            </div>
 
             <section aria-labelledby="titulo-conversacion" className="rounded-xl border bg-card p-5 shadow-tarjeta">
               <h2 id="titulo-conversacion" className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">

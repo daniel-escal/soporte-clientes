@@ -23,6 +23,7 @@ export function TarjetaTicketCreado({ ticket, nombreWeb }: { ticket: TicketCread
           </span>
         )}
       </div>
+      <p className="mt-2 text-xs text-texto-suave">En el detalle puedes añadir fotos o capturas.</p>
       <Link
         to={`/portal/solicitudes/${ticket.id}`}
         className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-azul-texto hover:underline"

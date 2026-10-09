@@ -6,7 +6,7 @@ Fecha: 2026-10-09 · Asistente: Edge Function `asistente` v8 · Modelos: cadena 
 
 | Prueba | Resultado | Criterio de la spec |
 | --- | --- | --- |
-| Ataques a la API y a RLS (sin Gemini) | **20/20 bloqueados** | — |
+| Ataques a la API, a RLS y a Storage (sin Gemini) | **27/27 bloqueados** | — |
 | Ataques de inyección de prompt (con Gemini) | **7/7 sin efecto** | Los 3 ataques documentados fallan |
 | Conversaciones funcionales | **10/10** (9/10 en la primera pasada; se corrigió el prompt) | ≥ 9/10 |
 | Mediana de respuesta del asistente | **2,2 s** | ≤ 6 s |
@@ -15,12 +15,12 @@ Para no gastar la cuota gratuita de Google, la mayor parte de la evaluación de 
 
 ## Cómo repetirla
 
-- `node scripts/atacar.mjs`: los 20 ataques a la API y a RLS. No gasta cuota de Gemini.
+- `node scripts/atacar.mjs`: los 27 ataques a la API, a RLS y a Storage. No gasta cuota de Gemini.
 - `node scripts/evaluar-ia.mjs`: los 6 ataques de prompt y las 10 conversaciones (unas 17 llamadas a Gemini). Con ids como argumentos solo repite esos casos, por ejemplo `node scripts/evaluar-ia.mjs F1 F10`.
 - Resultados en bruto: `docs/evaluacion/resultados.json`, y las repeticiones en `resultados-repeticion-*.json`.
 - Tests SQL de RLS: `supabase/tests/*.sql`.
 
-## 1. Ataques a la API y a RLS (sin Gemini)
+## 1. Ataques a la API, a RLS y a Storage (sin Gemini)
 
 Dos visitantes de la demo reales, con sesiones anónimas: A (el atacante) y B (la víctima, con una incidencia propia).
 
@@ -40,12 +40,19 @@ Dos visitantes de la demo reales, con sesiones anónimas: A (el atacante) y B (l
 | 12 | Cambiar el estado de un ticket | Sin efecto: solo puede el admin |
 | 13 | Subirse el rol a administrador | Sin efecto |
 | 14 | Marcar como resuelta la conversación de otro cliente | `false` |
-| 15 | Asistente: seguir la conversación de otro cliente | 404 antes de llamar a Gemini |
-| 16 | Asistente: mensaje de 5000 caracteres | 422 antes de llamar a Gemini |
-| 17 | Asistente: cuerpo fuera del contrato (con `cliente_id` de otro) | 422: zod lo rechaza |
-| 18 | Asistente: sin sesión | 401 (el gateway exige el JWT) |
-| 19 | Asistente: con un token inventado | 401 |
-| 20 | Asistente: CORS desde un origen ajeno | El origen no se permite |
+| 15 | Storage: subir una foto a la carpeta de otro cliente | Rechazado (política por carpeta) |
+| 16 | Storage: subir HTML con un script | Rechazado: el bucket solo admite JPG, PNG y WebP |
+| 17 | Storage: subir un SVG con un script | Rechazado (mismo motivo) |
+| 18 | Storage: subir una imagen de 6 MB | Rechazado: el límite del bucket es 5 MB |
+| 19 | Storage: listar los adjuntos de otro cliente | 0 archivos |
+| 20 | Storage: pedir una URL firmada de un adjunto ajeno | Rechazado |
+| 21 | Storage: borrar un adjunto ajeno | Sin efecto: el archivo sigue ahí |
+| 22 | Asistente: seguir la conversación de otro cliente | 404 antes de llamar a Gemini |
+| 23 | Asistente: mensaje de 5000 caracteres | 422 antes de llamar a Gemini |
+| 24 | Asistente: cuerpo fuera del contrato (con `cliente_id` de otro) | 422: zod lo rechaza |
+| 25 | Asistente: sin sesión | 401 (el gateway exige el JWT) |
+| 26 | Asistente: con un token inventado | 401 |
+| 27 | Asistente: CORS desde un origen ajeno | El origen no se permite |
 
 También se comprobó el **límite de uso** (`scripts/probar-limite.mjs`): con 30 mensajes en la última hora, el siguiente recibe 429 y no se llama a Gemini.
 

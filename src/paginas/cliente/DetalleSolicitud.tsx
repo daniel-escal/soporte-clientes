@@ -1,6 +1,7 @@
 import { ArrowLeft, Globe } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { Adjuntos } from '@/componentes/Adjuntos'
 import { BurbujaMensaje } from '@/componentes/BurbujaMensaje'
 import { CuadroRespuesta } from '@/componentes/CuadroRespuesta'
 import { EtiquetaTipo, InsigniaEstado } from '@/componentes/Insignias'
@@ -11,7 +12,7 @@ import { supabase } from '@/lib/supabase'
 import type { Tables } from '@/lib/tipos-bd'
 
 // Vista del cliente: sin prioridad (es triaje interno; docs/SPEC.md).
-type Solicitud = Pick<Tables<'tickets'>, 'id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'conversacion_id'> & {
+type Solicitud = Pick<Tables<'tickets'>, 'id' | 'cliente_id' | 'numero' | 'titulo' | 'tipo' | 'estado' | 'creado_en' | 'conversacion_id'> & {
   web: { nombre: string } | null
 }
 
@@ -26,7 +27,7 @@ export default function DetalleSolicitud() {
     let vigente = true
     supabase
       .from('tickets')
-      .select('id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
+      .select('id, cliente_id, numero, titulo, tipo, estado, creado_en, conversacion_id, web:webs!tickets_web_del_cliente(nombre)')
       .eq('id', id!)
       .maybeSingle()
       .then(({ data, error }) => {
@@ -83,6 +84,18 @@ export default function DetalleSolicitud() {
                   <Globe aria-hidden className="size-3.5" /> {solicitud.web.nombre}
                 </span>
               )}
+            </div>
+
+            <div className="mt-6 rounded-xl border bg-card p-4">
+              <Adjuntos
+                clienteId={solicitud.cliente_id}
+                ticketId={solicitud.id}
+                puedeSubir={solicitud.estado !== 'cerrado'}
+                conversacionId={solicitud.conversacion_id}
+                autor="cliente"
+                version={mensajes?.length}
+                onMensaje={(mensaje) => anadir([mensaje])}
+              />
             </div>
 
             <section aria-labelledby="titulo-conversacion" className="mt-8">

@@ -69,6 +69,40 @@ await ataque('Marcar como resuelta la conversación de otro cliente', 'false', a
   return error ? `error ${error.code}` : String(data)
 })
 
+// Storage (bucket privado "adjuntos"): ruta {cliente}/{ticket}/{archivo}.
+const PNG_1X1 = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='), (c) => c.charCodeAt(0))
+const imagen = () => new Blob([PNG_1X1], { type: 'image/png' })
+const { data: ticketA } = await a.db.rpc('abrir_solicitud', { p_titulo: 'Incidencia de A', p_descripcion: 'Algo falla en mi web', p_categoria: 'otro' })
+const rutaB = `${b.clienteId}/${ticketB.id}/foto-de-b.png`
+const { error: errorSubidaB } = await b.db.storage.from('adjuntos').upload(rutaB, imagen(), { contentType: 'image/png' })
+if (errorSubidaB) throw errorSubidaB
+const subida = async (ruta, contenido, tipo) => {
+  const { error } = await a.db.storage.from('adjuntos').upload(ruta, contenido, { contentType: tipo })
+  return error ? 'rechazado' : 'subido'
+}
+
+await ataque('Storage: subir a la carpeta de otro cliente', 'rechazado', () => subida(`${b.clienteId}/${ticketB.id}/intruso.png`, imagen(), 'image/png'))
+await ataque('Storage: HTML disfrazado de imagen', 'rechazado', () =>
+  subida(`${a.clienteId}/${ticketA.id}/captura.html`, new Blob(['<script>alert(1)</script>'], { type: 'text/html' }), 'text/html'),
+)
+await ataque('Storage: SVG (podría llevar scripts)', 'rechazado', () =>
+  subida(`${a.clienteId}/${ticketA.id}/logo.svg`, new Blob(['<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'], { type: 'image/svg+xml' }), 'image/svg+xml'),
+)
+await ataque('Storage: imagen de más de 5 MB', 'rechazado', () => subida(`${a.clienteId}/${ticketA.id}/enorme.png`, new Blob([new Uint8Array(6 * 1024 * 1024)], { type: 'image/png' }), 'image/png'))
+await ataque('Storage: listar los adjuntos de otro cliente', '0 archivos', async () => {
+  const { data, error } = await a.db.storage.from('adjuntos').list(`${b.clienteId}/${ticketB.id}`)
+  return error ? `error ${error.message}` : `${data.filter((o) => o.id).length} archivos`
+})
+await ataque('Storage: URL firmada de un adjunto ajeno', 'rechazado', async () => {
+  const { data, error } = await a.db.storage.from('adjuntos').createSignedUrl(rutaB, 60)
+  return error || !data?.signedUrl ? 'rechazado' : 'firmada'
+})
+await ataque('Storage: borrar un adjunto ajeno', 'sin efecto', async () => {
+  await a.db.storage.from('adjuntos').remove([rutaB])
+  const { data } = await b.db.storage.from('adjuntos').list(`${b.clienteId}/${ticketB.id}`)
+  return data?.some((o) => o.name === 'foto-de-b.png') ? 'sin efecto' : 'BORRADO'
+})
+
 // Edge Function: todos estos se rechazan antes de llamar a Gemini.
 await ataque('Asistente: seguir la conversación de otro cliente', '404 conversacion_no_encontrada', async () => {
   const { estado, cuerpo } = await invocarAsistente(a.db, { mensaje: 'Hola', conversacion_id: ticketB.conversacion_id })
