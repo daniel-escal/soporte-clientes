@@ -24,7 +24,8 @@ export default function Bandeja() {
   const [filtros, setFiltros] = useState(FILTROS_INICIALES)
   const [nuevos, setNuevos] = useState<ReadonlySet<string>>(new Set())
   const [aviso, setAviso] = useState('')
-  const [enDirecto, setEnDirecto] = useState(false)
+  // null mientras se conecta: no es lo mismo "conectando" que "sin conexión"
+  const [enDirecto, setEnDirecto] = useState<boolean | null>(null)
 
   useEffect(() => {
     let vigente = true
@@ -71,7 +72,12 @@ export default function Bandeja() {
           ) ?? null,
         )
       })
-      .subscribe((estado) => setEnDirecto(estado === 'SUBSCRIBED'))
+      .subscribe((estado) => {
+        // Al desmontar, el propio cierre del canal no es una caída de la conexión
+        if (!vigente) return
+        if (estado === 'SUBSCRIBED') setEnDirecto(true)
+        else if (estado === 'CHANNEL_ERROR' || estado === 'TIMED_OUT') setEnDirecto(false)
+      })
 
     return () => {
       vigente = false
@@ -84,18 +90,18 @@ export default function Bandeja() {
 
   return (
     <div className="grid gap-4">
-      <TarjetasKpi tickets={tickets ?? []} />
+      <TarjetasKpi tickets={tickets} />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_16rem]">
         <section aria-labelledby="titulo-bandeja" className="rounded-xl border bg-card shadow-tarjeta">
           <header className="grid gap-4 border-b p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h1 id="titulo-bandeja" className="text-lg font-semibold text-texto">
+              <h1 id="titulo-bandeja" aria-label={tickets ? `Bandeja, ${visibles.length} tickets` : 'Bandeja'} className="text-lg font-semibold text-texto">
                 Bandeja{' '}
                 {tickets && <span className="cifras ml-1 text-sm font-normal text-texto-suave">{visibles.length}</span>}
               </h1>
               <span className="flex items-center gap-2 text-xs text-texto-suave">
-                <span aria-hidden className={cn('size-2 rounded-full', enDirecto ? 'bg-[var(--estado-resuelto)]' : 'bg-texto-tenue')} />
-                {enDirecto ? 'En directo' : 'Sin conexión en directo'}
+                <span aria-hidden className={cn('size-2 rounded-full', enDirecto ? 'bg-[var(--estado-resuelto)]' : enDirecto === null ? 'animate-pulse bg-texto-tenue' : 'bg-[var(--prioridad-urgente)]')} />
+                {enDirecto ? 'En directo' : enDirecto === null ? 'Conectando…' : 'Sin conexión en directo'}
               </span>
             </div>
             <FiltrosBandeja filtros={filtros} clientes={clientes} onCambio={setFiltros} />
@@ -122,7 +128,7 @@ export default function Bandeja() {
             </ul>
           )}
         </section>
-        <TicketsPorCategoria tickets={tickets ?? []} />
+        <TicketsPorCategoria tickets={tickets} />
       </div>
     </div>
   )

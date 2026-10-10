@@ -23,13 +23,12 @@ export default function Entrada() {
 
       <main className="mx-auto grid max-w-6xl gap-10 px-4 pt-6 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:pt-14">
         <section aria-labelledby="titulo-entrada">
-          <p className="text-xs font-semibold tracking-[0.14em] text-azul-texto uppercase">Soporte para tu web</p>
-          <h1 id="titulo-entrada" className="mt-3 text-3xl leading-tight font-semibold text-balance text-texto sm:text-4xl lg:text-[2.75rem]">
+          <h1 id="titulo-entrada" className="text-3xl leading-tight font-semibold text-balance text-texto sm:text-4xl lg:text-[2.75rem]">
             Cuéntale el problema al asistente. Si no puede resolverlo, abre la incidencia por ti.
           </h1>
           <p className="mt-4 max-w-xl text-base text-pretty text-texto-suave">
-            Un asistente con IA para los clientes de daniel-escal.es: responde al momento con la base de conocimiento y, cuando hace falta una persona,
-            prepara la incidencia con todo lo necesario.
+            Un asistente con IA para los clientes de <span className="whitespace-nowrap">daniel-escal.es</span>: responde al momento con la base de
+            conocimiento y, cuando hace falta una persona, prepara la incidencia con todo lo necesario.
           </p>
           <AccesoDemo />
         </section>
@@ -73,10 +72,11 @@ function AccesoDemo() {
         </Button>
         <p className="text-sm text-texto-tenue">Demo con datos ficticios y sin registro.</p>
       </div>
-      <p role="alert" className="mt-3 min-h-5 text-sm text-[var(--prioridad-urgente)]">
+      {/* Vacío no ocupa sitio, pero sigue en la página para que el lector de pantalla anuncie el error */}
+      <p role="alert" className="mt-3 text-sm text-[var(--prioridad-urgente)] empty:mt-0">
         {error}
       </p>
-      <Link to="/admin/entrar" className="mt-1 inline-flex min-h-11 items-center text-sm text-texto-suave underline-offset-4 hover:text-texto hover:underline">
+      <Link to="/admin/entrar" className="mt-2 inline-flex min-h-11 items-center text-sm text-texto-suave hover:text-texto hover:underline">
         Acceso del administrador
       </Link>
     </div>

@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { calcularKpi, formatoDuracion, type DatosKpi } from '@/dominio/kpi'
 import { NOMBRE_CATEGORIA } from '@/dominio/tickets'
 import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 
-type Props = { tickets: DatosKpi['tickets'] }
+/** tickets es null mientras carga la bandeja: entonces no se enseña ningún número (un 0 provisional parece un dato). */
+type Props = { tickets: DatosKpi['tickets'] | null }
 
 /** KPI del panel: tarjetas pequeñas (como en la referencia) que se recalculan con la bandeja en directo. */
 export function TarjetasKpi({ tickets }: Props) {
-  const [conversaciones, setConversaciones] = useState<DatosKpi['conversaciones']>([])
-  const totalTickets = tickets.length
+  // null mientras carga: un 0 provisional se leería como un dato real ("— de 0 conversaciones")
+  const [conversaciones, setConversaciones] = useState<DatosKpi['conversaciones'] | null>(null)
+  const totalTickets = tickets?.length ?? 0
 
   // Las conversaciones cambian al escalar (llega un ticket) o al resolverse: se releen entonces y cada minuto.
   useEffect(() => {
@@ -29,21 +31,27 @@ export function TarjetasKpi({ tickets }: Props) {
     }
   }, [totalTickets])
 
-  const kpi = useMemo(() => calcularKpi({ tickets, conversaciones }), [tickets, conversaciones])
+  const kpi = useMemo(() => calcularKpi({ tickets: tickets ?? [], conversaciones: conversaciones ?? [] }), [tickets, conversaciones])
+  const cargando = tickets === null
 
   return (
     <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <Tarjeta titulo="Pendientes" valor={kpi.abiertos} detalle="abiertos, en curso o esperando" />
-      <Tarjeta titulo="Urgentes" valor={kpi.urgentes} detalle="pendientes con prioridad urgente" alerta={kpi.urgentes > 0} />
+      <Tarjeta titulo="Pendientes" valor={cargando ? <Cargando /> : kpi.abiertos} detalle="abiertos, en curso o esperando" />
+      <Tarjeta
+        titulo="Urgentes"
+        valor={cargando ? <Cargando /> : kpi.urgentes}
+        detalle="pendientes con prioridad urgente"
+        alerta={kpi.urgentes > 0}
+      />
       <Tarjeta
         titulo="Resuelto por la IA"
-        valor={kpi.resueltoPorIa === null ? '—' : `${kpi.resueltoPorIa} %`}
-        detalle={`de ${kpi.conversacionesTerminadas} conversaciones terminadas`}
-        progreso={kpi.resueltoPorIa ?? undefined}
+        valor={cargando || conversaciones === null ? <Cargando /> : kpi.resueltoPorIa === null ? '—' : `${kpi.resueltoPorIa} %`}
+        detalle={cargando || conversaciones === null ? 'Calculando…' : `de ${kpi.conversacionesTerminadas} conversaciones terminadas`}
+        progreso={cargando || conversaciones === null ? undefined : (kpi.resueltoPorIa ?? undefined)}
       />
       <Tarjeta
         titulo="Primera respuesta"
-        valor={kpi.primeraRespuestaMin === null ? '—' : formatoDuracion(kpi.primeraRespuestaMin)}
+        valor={cargando ? <Cargando /> : kpi.primeraRespuestaMin === null ? '—' : formatoDuracion(kpi.primeraRespuestaMin)}
         detalle="de media, desde que llega"
       />
     </section>
@@ -58,7 +66,7 @@ function Tarjeta({
   progreso,
 }: {
   titulo: string
-  valor: number | string
+  valor: ReactNode
   detalle: string
   alerta?: boolean
   progreso?: number
@@ -77,9 +85,14 @@ function Tarjeta({
   )
 }
 
+/** Hueco del valor mientras llega el dato. */
+function Cargando() {
+  return <span aria-label="Cargando" className="inline-block h-7 w-16 animate-pulse rounded-md bg-superficie-alta align-middle" />
+}
+
 /** Tickets por categoría en barras horizontales con el degradado de marca. */
 export function TicketsPorCategoria({ tickets }: Props) {
-  const { porCategoria } = useMemo(() => calcularKpi({ tickets, conversaciones: [] }), [tickets])
+  const { porCategoria } = useMemo(() => calcularKpi({ tickets: tickets ?? [], conversaciones: [] }), [tickets])
   const maximo = porCategoria[0]?.total ?? 0
 
   return (
@@ -87,7 +100,13 @@ export function TicketsPorCategoria({ tickets }: Props) {
       <h2 id="titulo-categorias" className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">
         Tickets por categoría
       </h2>
-      {porCategoria.length === 0 ? (
+      {tickets === null ? (
+        <div aria-busy="true" aria-label="Cargando" className="mt-4 grid gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-8 animate-pulse rounded-md bg-superficie-alta" />
+          ))}
+        </div>
+      ) : porCategoria.length === 0 ? (
         <p className="mt-3 text-texto-suave">Aún no hay tickets.</p>
       ) : (
         <ul className="mt-4 grid gap-3">

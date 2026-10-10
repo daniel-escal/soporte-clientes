@@ -47,8 +47,10 @@ export default function AccesoAdmin() {
   return (
     <div className="grid min-h-svh grid-rows-[auto_1fr]">
       <header className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6">
-        <Link to="/" aria-label="Volver a la entrada">
+        {/* El nombre accesible empieza por el texto visible (WCAG 2.5.3) */}
+        <Link to="/" className="inline-flex">
           <Marca />
+          <span className="sr-only">: volver a la entrada</span>
         </Link>
       </header>
 

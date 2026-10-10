@@ -175,6 +175,30 @@
     outline-offset: 2px;
   }
 
+  /* Lo que pinta el navegador también lleva la paleta: selección, cursor de texto, barras de scroll y subrayados */
+  ::selection {
+    background-color: rgb(139 92 246 / 0.45);
+    color: var(--texto);
+  }
+
+  input,
+  textarea {
+    caret-color: var(--violeta-texto);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--borde-control) transparent;
+  }
+
+  html {
+    scrollbar-color: var(--borde-control) var(--fondo);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
   /* Con "reducir movimiento" no se anima nada: ni el pulso de las cargas ni la entrada de los diálogos. */
   @media (prefers-reduced-motion: reduce) {
     *,

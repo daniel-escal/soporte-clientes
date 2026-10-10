@@ -24,7 +24,8 @@ export function Interruptor({ activo, onCambio, etiqueta, deshabilitado = false 
         aria-hidden
         className={cn(
           'relative inline-block h-6 w-11 shrink-0 rounded-full border border-borde-control transition-colors',
-          activo ? 'degradado-boton border-transparent' : 'bg-superficie-alta',
+          // Color sólido: el degradado se reserva para el botón principal, las barras, la franja activa y el orbe (ESTETICA)
+          activo ? 'border-transparent bg-violeta' : 'bg-superficie-alta',
         )}
       >
         <span

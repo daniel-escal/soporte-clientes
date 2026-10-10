@@ -91,7 +91,7 @@ export default function Faq() {
               <div className={entrada.activa ? undefined : 'opacity-60'}>
                 <p className="text-xs text-texto-tenue">{NOMBRE_CATEGORIA[entrada.categoria]}</p>
                 <p className="font-medium text-texto">{entrada.pregunta}</p>
-                <p className="mt-0.5 line-clamp-2 text-texto-suave">{entrada.respuesta}</p>
+                <p className="mt-0.5 line-clamp-2 max-w-[75ch] text-texto-suave">{entrada.respuesta}</p>
               </div>
               <div className="flex items-center gap-1">
                 <Interruptor activo={entrada.activa} onCambio={(activa) => cambiarActiva(entrada, activa)} etiqueta={`Entrada activa: ${entrada.pregunta}`} />

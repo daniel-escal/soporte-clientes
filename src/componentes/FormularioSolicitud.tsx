@@ -138,7 +138,8 @@ export function FormularioSolicitud({ webs, onCreada, textoBoton = 'Nueva solici
                   value={valor}
                   checked={categoria === valor}
                   onChange={() => setCategoria(valor)}
-                  className="mt-0.5 size-4 shrink-0 accent-[var(--violeta)]"
+                  // Dibujado con la paleta: el radio nativo sale gris y con el foco cuadrado
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-borde-control bg-superficie transition-colors checked:border-[5px] checked:border-violeta checked:bg-texto"
                 />
                 <span>
                   <span className="block text-sm font-medium text-texto">{OPCION_SOLICITUD[valor].nombre}</span>

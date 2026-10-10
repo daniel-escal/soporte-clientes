@@ -96,6 +96,8 @@ Esta estética coincide con la **"estética de IA" que la skill `frontend-ui-eng
    Nunca va detrás de bloques de texto ni en fondos de página.
 2. **Como mucho dos elementos con brillo por pantalla:** el orbe y el botón principal (en hover y foco), más un ticket urgente recién llegado de forma temporal.
 3. **El resto es plano:** superficies sólidas, bordes sutiles y una sola sombra.
+   - Los interruptores y los radios marcados van en violeta sólido (`--violeta`, 4,06:1 sobre superficie), no con el degradado.
+   - Lo que pinta el navegador también lleva la paleta: la selección de texto, el cursor de los campos, las barras de scroll (finas, en `--borde-control`) y los subrayados.
 4. **El contenido manda en la composición.** El bento se ordena por importancia:
    - la bandeja de tickets ocupa la tarjeta grande;
    - los KPI van en tarjetas pequeñas;
