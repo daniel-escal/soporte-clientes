@@ -2,7 +2,7 @@
 
 Fecha: 2026-10-09 · Commit `bc080f1` · Web pública: https://daniel-escal.github.io/soporte-clientes/
 
-**Resultado: 10 de 12 criterios cumplidos con evidencia.** Faltan dos cosas que no dependen del código: que Daniel apruebe la estética (criterio 8) y el ensayo de la demo el lunes con Supabase activo el martes (criterio 12).
+**Resultado: 11 de 12 criterios cumplidos con evidencia.** Falta lo que no depende del código: el ensayo de la demo el lunes con Supabase activo el martes (criterio 12).
 
 | # | Criterio | Estado | Evidencia |
 | --- | --- | --- | --- |
@@ -13,7 +13,7 @@ Fecha: 2026-10-09 · Commit `bc080f1` · Web pública: https://daniel-escal.gith
 | 5 | Claves | ✅ | `dist/` sin claves secretas de Supabase (`sb_secret_…`) ni de Google (`AIza…`). La de Gemini solo existe como secreto de la Edge Function |
 | 6 | Panel | ✅ | Bandeja con 4 filtros, detalle, solo transiciones válidas, respuesta, y KPI iguales a la consulta SQL de control |
 | 7 | Tiempo real | ✅ | Un ticket enviado desde la web pública aparece en el panel en **1,1 s** (límite 3 s). Respuestas, fotos y cambios de estado llegan al cliente sin recargar |
-| 8 | Estética | ⏳ | Contraste AA y `prefers-reduced-motion` cumplidos. **Falta la aprobación de Daniel** |
+| 8 | Estética | ✅ | Aprobada y aplicada el 2026-10-10 (Umbracle, commit `f845ed5`). Contraste AA en las dos luces y `prefers-reduced-motion` |
 | 9 | Responsive | ✅ | Portal sin scroll horizontal a 320, 375, 768 y 1920 px. Panel cómodo a 1280 y usable a 768 |
 | 10 | Calidad | ✅ | `typecheck`, `lint` (0 errores), 173 tests, 7 tests de RLS y `build` correctos. Consola limpia en los flujos |
 | 11 | Lighthouse móvil | ✅ | Rendimiento **92**, accesibilidad **100**, buenas prácticas **100**. JS inicial: **240 KB** comprimido (límite 250) |
@@ -56,9 +56,12 @@ Se ejecutan con el MCP de Supabase y se deshacen al terminar.
 
 ### 8. Estética
 
-- **Contraste:** la auditoría `color-contrast` de Lighthouse pasa en la entrada, el portal, la bandeja y el detalle del ticket (accesibilidad 100 en las cuatro).
-- **Movimiento reducido:** una regla global para las animaciones con `prefers-reduced-motion: reduce`, más `motion-safe` en el orbe. Hasta hoy, el pulso de las cargas y la entrada de los diálogos se animaban igualmente.
-- **Pendiente:** el visto bueno de Daniel (punto de revisión 1).
+- **Dirección:** Daniel eligió la propuesta "Umbracle, versión definitiva" y se aplicó el 2026-10-10 (`docs/ESTETICA.md`).
+- **Contraste:** `tests/tema.test.ts` comprueba AA en las dos paletas. Lighthouse en el móvil, sobre la web publicada (2026-10-10):
+  - entrada en oscuro: accesibilidad 100;
+  - portal en oscuro y en claro: accesibilidad 100 en los dos.
+- **Dos luces:** el portal y la entrada siguen el modo del sistema. El panel y su acceso se quedan en oscuro aunque el sistema esté en claro, comprobado en local y en producción.
+- **Movimiento reducido:** una regla global para las animaciones con `prefers-reduced-motion: reduce`, más `motion-safe` en el barrido de las costillas.
 
 ### 9. Responsive
 
