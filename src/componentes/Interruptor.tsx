@@ -8,7 +8,7 @@ type Props = {
   deshabilitado?: boolean
 }
 
-/** Interruptor (role="switch") como los de la referencia. El estado también va en texto, no solo en color. */
+/** Interruptor (role="switch"). El estado también va en texto, no solo en color. */
 export function Interruptor({ activo, onCambio, etiqueta, deshabilitado = false }: Props) {
   return (
     <button

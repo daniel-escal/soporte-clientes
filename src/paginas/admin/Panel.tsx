@@ -13,10 +13,11 @@ const SECCIONES = [
   { a: '/admin/faq', nombre: 'Base de conocimiento', icono: BookOpenText, activa: (ruta: string) => ruta.startsWith('/admin/faq') },
 ] as const
 
-/** Marco del panel (cargado aparte del portal del cliente). Texto base de 14 px: denso, como la referencia. */
+/** Marco del panel (cargado aparte del portal del cliente). Texto base de 14 px: denso. */
 export default function Panel() {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  // GitHub Pages sirve /admin como carpeta y redirige a /admin/: sin la barra final, la sección activa se marca igual
+  const pathname = useLocation().pathname.replace(/(.)\/+$/, '$1')
   const { sesion } = useSesion()
 
   async function salir() {

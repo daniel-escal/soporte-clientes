@@ -15,7 +15,7 @@ Fecha: 2026-10-09 · Commit `bc080f1` · Web pública: https://daniel-escal.gith
 | 7 | Tiempo real | ✅ | Un ticket enviado desde la web pública aparece en el panel en **1,1 s** (límite 3 s). Respuestas, fotos y cambios de estado llegan al cliente sin recargar |
 | 8 | Estética | ✅ | Aprobada y aplicada el 2026-10-10 (Umbracle, commit `f845ed5`). Contraste AA en las dos luces y `prefers-reduced-motion` |
 | 9 | Responsive | ✅ | Portal sin scroll horizontal a 320, 375, 768 y 1920 px. Panel cómodo a 1280 y usable a 768 |
-| 10 | Calidad | ✅ | `typecheck`, `lint` (0 errores), 173 tests, 7 tests de RLS y `build` correctos. Consola limpia en los flujos |
+| 10 | Calidad | ✅ | `typecheck`, `lint` (0 errores), 187 tests, 7 tests de RLS y `build` correctos. Consola limpia en los flujos |
 | 11 | Lighthouse móvil | ✅ | Rendimiento **92**, accesibilidad **100**, buenas prácticas **100**. JS inicial: **240 KB** comprimido (límite 250) |
 | 12 | Reunión | ⏳ | Guion en la T13. Ensayo el lunes 12 y Supabase activo el martes por la mañana (lista de abajo) |
 

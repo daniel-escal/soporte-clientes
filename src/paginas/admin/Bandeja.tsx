@@ -180,7 +180,7 @@ function FilaTicket({ ticket, nuevo }: { ticket: FilaBandeja; nuevo: boolean }) 
   )
 }
 
-/** Iniciales del cliente en un círculo (las listas con avatar de la referencia). */
+/** Iniciales del cliente en un círculo. */
 function Avatar({ nombre }: { nombre: string }) {
   const iniciales = nombre
     .split(/\s+/)
