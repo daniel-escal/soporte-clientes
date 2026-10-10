@@ -9,9 +9,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
-        // Acción principal de la marca (ESTETICA: degradado y brillo solo aquí y en el orbe)
+        // Acción principal (ESTETICA: el único acento, en sólido). Al pasar por encima se acerca al texto: más claro de noche, más oscuro de día.
         marca:
-          "degradado-boton font-semibold text-white hover:shadow-brillo-violeta focus-visible:shadow-brillo-violeta",
+          "bg-agua font-semibold text-sobre-agua hover:bg-[color-mix(in_srgb,var(--agua)_86%,var(--texto))]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

@@ -32,7 +32,7 @@ type Props = {
   webs: Pick<Tables<'webs'>, 'id' | 'nombre'>[]
   onCreada: (ticket: Tables<'tickets'>) => void
   textoBoton?: string
-  /** 'outline' cuando no es la acción principal de la pantalla (ESTETICA: un solo botón con degradado). */
+  /** 'outline' cuando no es la acción principal de la pantalla (ESTETICA: un solo botón principal en agua por pantalla). */
   varianteBoton?: 'marca' | 'outline'
   /** Lo que el cliente ya ha contado (p. ej. en el chat), para no hacérselo repetir. */
   inicial?: { titulo?: string; descripcion?: string }
@@ -130,7 +130,7 @@ export function FormularioSolicitud({ webs, onCreada, textoBoton = 'Nueva solici
             {CATEGORIAS_CLIENTE.map((valor) => (
               <label
                 key={valor}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-superficie-alta has-checked:border-violeta has-checked:bg-superficie-alta"
+                className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-superficie-alta has-checked:border-agua has-checked:bg-superficie-alta"
               >
                 <input
                   type="radio"
@@ -139,7 +139,7 @@ export function FormularioSolicitud({ webs, onCreada, textoBoton = 'Nueva solici
                   checked={categoria === valor}
                   onChange={() => setCategoria(valor)}
                   // Dibujado con la paleta: el radio nativo sale gris y con el foco cuadrado
-                  className="mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-borde-control bg-superficie transition-colors checked:border-[5px] checked:border-violeta checked:bg-texto"
+                  className="mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-borde-control bg-superficie transition-colors checked:border-[5px] checked:border-agua checked:bg-superficie"
                 />
                 <span>
                   <span className="block text-sm font-medium text-texto">{OPCION_SOLICITUD[valor].nombre}</span>
@@ -202,7 +202,7 @@ export function FormularioSolicitud({ webs, onCreada, textoBoton = 'Nueva solici
             {errores.descripcion && <MensajeError id="error-descripcion">{errores.descripcion}</MensajeError>}
           </div>
 
-          <p role="alert" className="min-h-5 text-sm text-[var(--prioridad-urgente)]">
+          <p role="alert" className="min-h-5 text-sm text-coral">
             {errorGeneral}
           </p>
 
@@ -219,7 +219,7 @@ export function FormularioSolicitud({ webs, onCreada, textoBoton = 'Nueva solici
 
 function MensajeError({ id, children }: { id: string; children: string }) {
   return (
-    <p id={id} className="text-sm text-[var(--prioridad-urgente)]">
+    <p id={id} className="text-sm text-coral">
       {children}
     </p>
   )

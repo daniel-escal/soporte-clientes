@@ -32,8 +32,9 @@ Vite 8 · React 19 · TypeScript 6 · React Router 8 · Tailwind CSS 4 · shadcn
 
 - Nombres de dominio en español (`estado`, `prioridad`, `puedeCambiar`) y los del framework en inglés.
 - Colores, radios y sombras salen de los tokens. Nada de hexadecimales sueltos en los componentes.
-- El degradado y el brillo solo se usan donde dice `ESTETICA.md`: botón principal, barras de datos, franja activa y orbe.
-- Estados y prioridades siempre con texto e icono.
+- Sin degradados, brillos ni sombras de color (`ESTETICA.md`). Un solo acento, el agua; el coral solo para lo urgente y los errores, y el sodio solo para "esperando al cliente".
+- Estados siempre con texto y costillas (`Costillas`); prioridades, con texto e icono.
+- Todo lo del portal y la entrada se revisa en las dos luces (oscura y clara). El panel es siempre oscuro.
 - Los mensajes de clientes y de la IA se pintan como texto: nunca `dangerouslySetInnerHTML`.
 - Toda entrada externa (respuesta de la IA, cuerpo de una petición) se valida con zod.
 

@@ -58,7 +58,7 @@ export default function Faq() {
   const activas = entradas?.filter((e) => e.activa).length ?? 0
 
   return (
-    <section aria-labelledby="titulo-faq" className="rounded-xl border bg-card shadow-tarjeta">
+    <section aria-labelledby="titulo-faq" className="rounded-xl border bg-card">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b p-4 sm:p-5">
         <div>
           <h1 id="titulo-faq" className="text-lg font-semibold text-texto">
@@ -78,7 +78,7 @@ export default function Faq() {
       </header>
 
       {error && (
-        <p role="alert" className="px-5 pt-4 text-[var(--prioridad-urgente)]">
+        <p role="alert" className="px-5 pt-4 text-coral">
           {error}
         </p>
       )}
@@ -203,7 +203,7 @@ function DialogoEntrada({
               </SelectContent>
             </Select>
           </div>
-          <p role="alert" className="min-h-5 text-sm text-[var(--prioridad-urgente)]">
+          <p role="alert" className="min-h-5 text-sm text-coral">
             {errorGeneral}
           </p>
           <DialogFooter>
@@ -219,7 +219,7 @@ function DialogoEntrada({
 
 function ErrorCampo({ id, children }: { id: string; children: string }) {
   return (
-    <p id={id} className="text-sm text-[var(--prioridad-urgente)]">
+    <p id={id} className="text-sm text-coral">
       {children}
     </p>
   )

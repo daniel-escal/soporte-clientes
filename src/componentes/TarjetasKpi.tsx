@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 /** tickets es null mientras carga la bandeja: entonces no se enseña ningún número (un 0 provisional parece un dato). */
 type Props = { tickets: DatosKpi['tickets'] | null }
 
-/** KPI del panel: tarjetas pequeñas (como en la referencia) que se recalculan con la bandeja en directo. */
+/** KPI del panel: cifras grandes y ligeras que se recalculan con la bandeja en directo. */
 export function TarjetasKpi({ tickets }: Props) {
   // null mientras carga: un 0 provisional se leería como un dato real ("— de 0 conversaciones")
   const [conversaciones, setConversaciones] = useState<DatosKpi['conversaciones'] | null>(null)
@@ -47,7 +47,6 @@ export function TarjetasKpi({ tickets }: Props) {
         titulo="Resuelto por la IA"
         valor={cargando || conversaciones === null ? <Cargando /> : kpi.resueltoPorIa === null ? '—' : `${kpi.resueltoPorIa} %`}
         detalle={cargando || conversaciones === null ? 'Calculando…' : `de ${kpi.conversacionesTerminadas} conversaciones terminadas`}
-        progreso={cargando || conversaciones === null ? undefined : (kpi.resueltoPorIa ?? undefined)}
       />
       <Tarjeta
         titulo="Primera respuesta"
@@ -63,23 +62,16 @@ function Tarjeta({
   valor,
   detalle,
   alerta = false,
-  progreso,
 }: {
   titulo: string
   valor: ReactNode
   detalle: string
   alerta?: boolean
-  progreso?: number
 }) {
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-tarjeta">
+    <div className="rounded-xl border bg-card p-4">
       <p className="text-xs text-texto-suave">{titulo}</p>
-      <p className={cn('cifras mt-1 text-2xl font-semibold', alerta ? 'text-[var(--prioridad-urgente)]' : 'text-texto')}>{valor}</p>
-      {progreso !== undefined && (
-        <div aria-hidden className="mt-2 h-1.5 overflow-hidden rounded-full bg-superficie-alta">
-          <div className="degradado-marca h-full rounded-full" style={{ width: `${progreso}%` }} />
-        </div>
-      )}
+      <p className={cn('cifras mt-1 font-heading text-3xl font-light tracking-tight whitespace-nowrap', alerta ? 'text-coral' : 'text-texto')}>{valor}</p>
       <p className="mt-1.5 text-xs text-texto-tenue">{detalle}</p>
     </div>
   )
@@ -87,17 +79,17 @@ function Tarjeta({
 
 /** Hueco del valor mientras llega el dato. */
 function Cargando() {
-  return <span aria-label="Cargando" className="inline-block h-7 w-16 animate-pulse rounded-md bg-superficie-alta align-middle" />
+  return <span aria-label="Cargando" className="inline-block h-9 w-16 animate-pulse rounded-md bg-superficie-alta align-middle" />
 }
 
-/** Tickets por categoría en barras horizontales con el degradado de marca. */
+/** Tickets por categoría en barras horizontales de color sólido (sin degradados: docs/ESTETICA.md). */
 export function TicketsPorCategoria({ tickets }: Props) {
   const { porCategoria } = useMemo(() => calcularKpi({ tickets: tickets ?? [], conversaciones: [] }), [tickets])
   const maximo = porCategoria[0]?.total ?? 0
 
   return (
-    <section aria-labelledby="titulo-categorias" className="rounded-xl border bg-card p-5 shadow-tarjeta">
-      <h2 id="titulo-categorias" className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">
+    <section aria-labelledby="titulo-categorias" className="rounded-xl border bg-card p-5">
+      <h2 id="titulo-categorias" className="text-base font-medium text-texto">
         Tickets por categoría
       </h2>
       {tickets === null ? (
@@ -117,7 +109,7 @@ export function TicketsPorCategoria({ tickets }: Props) {
                 <span className="cifras text-texto">{total}</span>
               </span>
               <span aria-hidden className="h-1.5 overflow-hidden rounded-full bg-superficie-alta">
-                <span className="degradado-marca block h-full rounded-full" style={{ width: `${(total / maximo) * 100}%` }} />
+                <span className="block h-full rounded-full bg-agua" style={{ width: `${(total / maximo) * 100}%` }} />
               </span>
             </li>
           ))}

@@ -1,56 +1,48 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
-
-/* Solo hay tema oscuro: <html class="dark"> activa las variantes dark: de shadcn. */
-@custom-variant dark (&:is(.dark *));
+@import "@fontsource-variable/red-hat-display";
+@import "@fontsource-variable/red-hat-text";
 
 /*
- * Tokens de docs/ESTETICA.md. Los contrastes los comprueba tests/tema.test.ts:
+ * Dos luces (docs/ESTETICA.md): oscuro de serie y claro solo si el sistema está en claro.
+ * El panel lleva data-tema="oscuro" en <html> (index.html y lib/tema.ts) y es siempre oscuro.
+ * Las variantes dark: de shadcn siguen exactamente la misma regla.
+ */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    @slot;
+  }
+  &:where([data-tema='oscuro'], [data-tema='oscuro'] *) {
+    @slot;
+  }
+}
+
+/*
+ * Tokens de docs/ESTETICA.md. Los contrastes de las dos paletas los comprueba tests/tema.test.ts:
  * si cambias un color, el test dirá si sigue cumpliendo AA.
  */
 :root {
   color-scheme: dark;
 
-  /* Superficies */
-  --fondo: #23243b;
-  --superficie: #181a2c;
-  --superficie-alta: #20223a;
-  --borde: #2f3253;
-  --borde-control: #6e72a3;
+  /* Superficies: noche azulada, no negro puro */
+  --fondo: #0a0f14;
+  --superficie: #11181f;
+  --superficie-alta: #18212a;
+  --borde: #2a3743;
+  --borde-control: #647581;
 
-  /* Texto */
-  --texto: #e9eaf5;
-  --texto-suave: #a7aac6;
-  --texto-tenue: #8b8fb2;
-  --azul-texto: #7aa7ff;
-  --violeta-texto: #b49cff;
+  /* Texto: hueso, niebla y tenue */
+  --texto: #e8edef;
+  --texto-suave: #9aa8b1;
+  --texto-tenue: #7f8d97;
 
-  /* Acentos */
-  --azul: #3b82f6;
-  --violeta: #8b5cf6;
-  --magenta: #d946ef;
-  --cian: #38bdf8;
-  --foco: #b49cff;
-  --boton-inicio: #2563eb;
-  --boton-fin: #7c3aed;
-  --degradado-marca: linear-gradient(90deg, var(--azul), var(--violeta));
-  --degradado-boton: linear-gradient(90deg, var(--boton-inicio), var(--boton-fin));
-
-  /* Estados y prioridades */
-  --estado-abierto: #7aa7ff;
-  --estado-en-curso: #b49cff;
-  --estado-esperando: #fbbf24;
-  --estado-resuelto: #34d399;
-  --estado-cerrado: #a7aac6;
-  --prioridad-urgente: #fb7185;
-  --prioridad-alta: #fb923c;
-
-  /* Efectos */
-  --sombra-tarjeta: 0 8px 24px rgb(0 0 0 / 0.35);
-  --brillo-violeta: 0 0 24px rgb(139 92 246 / 0.45);
-  --brillo-cian: 0 0 32px rgb(56 189 248 / 0.35);
+  /* Un solo acento (agua). Coral solo para lo urgente y los errores; sodio solo para "esperando al cliente". */
+  --agua: #3fd5cb;
+  --sobre-agua: #0a0f14;
+  --coral: #ff7a66;
+  --sodio: #e9b44c;
+  --costilla-apagada: #2a3743;
 
   /* Variables de shadcn/ui, mapeadas a los tokens */
   --background: var(--fondo);
@@ -59,37 +51,61 @@
   --card-foreground: var(--texto);
   --popover: var(--superficie);
   --popover-foreground: var(--texto);
-  --primary: var(--boton-fin);
-  --primary-foreground: #ffffff;
+  --primary: var(--agua);
+  --primary-foreground: var(--sobre-agua);
   --secondary: var(--superficie-alta);
   --secondary-foreground: var(--texto);
   --muted: var(--superficie-alta);
   --muted-foreground: var(--texto-suave);
   --accent: var(--superficie-alta);
   --accent-foreground: var(--texto);
-  --destructive: var(--prioridad-urgente);
+  --destructive: var(--coral);
   --border: var(--borde);
   --input: var(--borde-control);
-  --ring: var(--foco);
-  --chart-1: var(--azul);
-  --chart-2: var(--violeta);
-  --chart-3: var(--cian);
-  --chart-4: var(--estado-esperando);
-  --chart-5: var(--prioridad-urgente);
+  --ring: var(--agua);
+  --chart-1: var(--agua);
+  --chart-2: var(--sodio);
+  --chart-3: var(--coral);
+  --chart-4: var(--texto-suave);
+  --chart-5: var(--borde-control);
   --radius: 0.75rem; /* 12 px: tarjetas */
   --sidebar: var(--superficie);
   --sidebar-foreground: var(--texto);
-  --sidebar-primary: var(--boton-fin);
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary: var(--agua);
+  --sidebar-primary-foreground: var(--sobre-agua);
   --sidebar-accent: var(--superficie-alta);
   --sidebar-accent-foreground: var(--texto);
   --sidebar-border: var(--borde);
-  --sidebar-ring: var(--foco);
+  --sidebar-ring: var(--agua);
+}
+
+/* Luz de día: el portal y la entrada en un móvil en modo claro, que se lee al sol. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema='oscuro']) {
+    color-scheme: light;
+
+    --fondo: #f3f6f6;
+    --superficie: #ffffff;
+    --superficie-alta: #e9eef0;
+    --borde: #d3dbde;
+    --borde-control: #73818a;
+
+    --texto: #0a0f14;
+    --texto-suave: #4a5863;
+    --texto-tenue: #5f6d78;
+
+    /* El mismo acento, más oscuro: el turquesa de noche no pasa el contraste sobre blanco */
+    --agua: #097069;
+    --sobre-agua: #ffffff;
+    --coral: #b93a27;
+    --sodio: #8a5a00;
+    --costilla-apagada: #c9d3d7;
+  }
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-sans: 'Red Hat Text Variable', system-ui, sans-serif;
+  --font-heading: 'Red Hat Display Variable', system-ui, sans-serif;
 
   --color-fondo: var(--fondo);
   --color-superficie: var(--superficie);
@@ -98,12 +114,11 @@
   --color-texto: var(--texto);
   --color-texto-suave: var(--texto-suave);
   --color-texto-tenue: var(--texto-tenue);
-  --color-azul: var(--azul);
-  --color-violeta: var(--violeta);
-  --color-azul-texto: var(--azul-texto);
-  --color-violeta-texto: var(--violeta-texto);
-  --color-cian: var(--cian);
-  --color-magenta: var(--magenta);
+  --color-agua: var(--agua);
+  --color-sobre-agua: var(--sobre-agua);
+  --color-coral: var(--coral);
+  --color-sodio: var(--sodio);
+  --color-costilla-apagada: var(--costilla-apagada);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -145,10 +160,6 @@
   --radius-2xl: 1.25rem;
   --radius-3xl: 1.5rem;
   --radius-4xl: 2rem;
-
-  --shadow-tarjeta: var(--sombra-tarjeta);
-  --shadow-brillo-violeta: var(--brillo-violeta);
-  --shadow-brillo-cian: var(--brillo-cian);
 }
 
 @layer base {
@@ -161,6 +172,12 @@
     font-size: 0.875rem; /* 14 px: densidad del panel; el chat sube a 16 px */
   }
 
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+  }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -171,19 +188,19 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--foco);
+    outline: 2px solid var(--agua);
     outline-offset: 2px;
   }
 
   /* Lo que pinta el navegador también lleva la paleta: selección, cursor de texto, barras de scroll y subrayados */
   ::selection {
-    background-color: rgb(139 92 246 / 0.45);
+    background-color: color-mix(in srgb, var(--agua) 30%, transparent);
     color: var(--texto);
   }
 
   input,
   textarea {
-    caret-color: var(--violeta-texto);
+    caret-color: var(--agua);
   }
 
   * {
@@ -199,7 +216,7 @@
     text-underline-offset: 0.2em;
   }
 
-  /* Con "reducir movimiento" no se anima nada: ni el pulso de las cargas ni la entrada de los diálogos. */
+  /* Con "reducir movimiento" no se anima nada: ni el barrido de las costillas ni la entrada de los diálogos. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -207,41 +224,28 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
   }
-}
-
-/* Utilidades de la marca. Reglas de uso en docs/ESTETICA.md: el degradado es una señal, no un fondo. */
-@utility degradado-boton {
-  background-image: var(--degradado-boton);
-}
-
-@utility degradado-marca {
-  background-image: var(--degradado-marca);
 }
 
 @utility cifras {
   font-variant-numeric: tabular-nums;
 }
 
-/* Halo del orbe del asistente: violeta + cian (ESTETICA: solo en el orbe) */
-@utility brillo-orbe {
-  box-shadow: var(--brillo-violeta), var(--brillo-cian);
-}
-
 @theme {
-  --animate-respirar: respirar 2.4s ease-in-out infinite;
+  /* El único gesto animado: las costillas se encienden en barrido mientras la IA piensa */
+  --animate-barrido: barrido 1.6s ease-out infinite;
 
-  @keyframes respirar {
+  @keyframes barrido {
     0%,
     100% {
-      opacity: 0.55;
-      transform: scale(1);
+      background-color: var(--costilla-apagada);
     }
-    50% {
-      opacity: 1;
-      transform: scale(1.08);
+    25%,
+    45% {
+      background-color: var(--agua);
     }
   }
 }

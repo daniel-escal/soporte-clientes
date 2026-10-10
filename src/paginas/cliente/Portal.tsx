@@ -67,7 +67,7 @@ export default function Portal() {
         </p>
 
         {error && (
-          <p role="alert" className="mt-6 text-[var(--prioridad-urgente)]">
+          <p role="alert" className="mt-6 text-coral">
             {error}
           </p>
         )}
@@ -116,7 +116,7 @@ export default function Portal() {
                   {webs.map((web) => (
                     <li key={web.id} className="flex items-center gap-3 rounded-lg border bg-card p-3">
                       <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-superficie-alta">
-                        <Globe className="size-4 text-azul-texto" />
+                        <Globe className="size-4 text-texto-suave" />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-sm font-medium text-texto">{web.nombre}</span>

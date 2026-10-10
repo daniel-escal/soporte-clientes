@@ -94,7 +94,7 @@ export function Adjuntos({ clienteId, ticketId, puedeSubir, conversacionId, auto
   return (
     <section aria-labelledby={idTitulo} className="grid gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={idTitulo} className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">
+        <h2 id={idTitulo} className="text-base font-medium text-texto">
           Fotos y capturas{adjuntos && adjuntos.length > 0 && ` (${adjuntos.length})`}
         </h2>
         {puedeSubir && adjuntos && adjuntos.length < MAXIMO_POR_SOLICITUD && (
@@ -118,7 +118,7 @@ export function Adjuntos({ clienteId, ticketId, puedeSubir, conversacionId, auto
         )}
       </div>
 
-      <p role="alert" className="text-sm text-[var(--prioridad-urgente)] empty:hidden">
+      <p role="alert" className="text-sm text-coral empty:hidden">
         {error}
       </p>
 

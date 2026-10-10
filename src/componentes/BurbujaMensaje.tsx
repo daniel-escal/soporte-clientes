@@ -11,12 +11,12 @@ const PROPIO = 'ml-auto bg-superficie-alta rounded-br-sm'
 const ESTILO = {
   cliente: {
     cliente: { nombre: 'Tú', icono: UserRound, clase: PROPIO },
-    ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
-    admin: { nombre: 'Daniel', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
+    ia: { nombre: 'Asistente', icono: Headset, clase: 'border rounded-bl-sm' },
+    admin: { nombre: 'Daniel', icono: UserRound, clase: 'border border-borde-control rounded-bl-sm' },
   },
   admin: {
-    cliente: { nombre: 'Cliente', icono: UserRound, clase: 'border border-azul/50 rounded-bl-sm' },
-    ia: { nombre: 'Asistente', icono: Headset, clase: 'border border-violeta/40 rounded-bl-sm' },
+    cliente: { nombre: 'Cliente', icono: UserRound, clase: 'border border-borde-control rounded-bl-sm' },
+    ia: { nombre: 'Asistente', icono: Headset, clase: 'border rounded-bl-sm' },
     admin: { nombre: 'Tú', icono: UserRound, clase: PROPIO },
   },
 } as const

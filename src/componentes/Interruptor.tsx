@@ -24,14 +24,14 @@ export function Interruptor({ activo, onCambio, etiqueta, deshabilitado = false 
         aria-hidden
         className={cn(
           'relative inline-block h-6 w-11 shrink-0 rounded-full border border-borde-control transition-colors',
-          // Color sólido: el degradado se reserva para el botón principal, las barras, la franja activa y el orbe (ESTETICA)
-          activo ? 'border-transparent bg-violeta' : 'bg-superficie-alta',
+          activo ? 'border-transparent bg-agua' : 'bg-superficie-alta',
         )}
       >
         <span
           className={cn(
-            'absolute top-1/2 left-0.5 size-4.5 -translate-y-1/2 rounded-full bg-white shadow transition-transform motion-reduce:transition-none',
-            activo && 'translate-x-5',
+            'absolute top-1/2 left-0.5 size-4.5 -translate-y-1/2 rounded-full transition-transform motion-reduce:transition-none',
+            // La bola contrasta con su fondo en los dos estados: noche sobre agua (10,6:1) y niebla sobre la superficie alta
+            activo ? 'translate-x-5 bg-sobre-agua' : 'bg-texto-suave',
           )}
         />
       </span>

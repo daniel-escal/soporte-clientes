@@ -53,12 +53,11 @@ export default function Panel() {
                     to={a}
                     aria-current={esActiva ? 'page' : undefined}
                     className={cn(
-                      'relative flex min-h-10 items-center gap-2.5 overflow-hidden rounded-lg px-3 whitespace-nowrap text-texto-suave transition-colors hover:bg-superficie-alta hover:text-texto',
-                      // Franja de degradado en la sección activa (ESTETICA: panel activo).
-                      esActiva && 'bg-card text-texto before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-linear-to-b before:from-azul before:to-violeta',
+                      'flex min-h-10 items-center gap-2.5 rounded-lg px-3 whitespace-nowrap text-texto-suave transition-colors hover:bg-superficie-alta hover:text-texto',
+                      esActiva && 'bg-card text-texto',
                     )}
                   >
-                    <Icono aria-hidden className="size-4" />
+                    <Icono aria-hidden className={cn('size-4', esActiva && 'text-agua')} />
                     {nombre}
                   </Link>
                 </li>

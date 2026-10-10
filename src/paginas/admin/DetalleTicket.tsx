@@ -113,7 +113,7 @@ export default function DetalleTicket() {
       {carga === 'cargando' && <div aria-busy="true" aria-label="Cargando el ticket" className="h-64 animate-pulse rounded-xl border bg-card" />}
       {carga === 'no-encontrado' && <p className="text-texto-suave">Este ticket no existe.</p>}
       {carga === 'error' && (
-        <p role="alert" className="text-[var(--prioridad-urgente)]">
+        <p role="alert" className="text-coral">
           No hemos podido cargar el ticket. Prueba a recargar la página.
         </p>
       )}
@@ -121,7 +121,7 @@ export default function DetalleTicket() {
       {ticket && (
         <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
           <article className="grid content-start gap-4">
-            <header className="rounded-xl border bg-card p-5 shadow-tarjeta">
+            <header className="rounded-xl border bg-card p-5">
               <p className="flex flex-wrap items-center gap-x-1 text-xs text-texto-tenue">
                 <EtiquetaTipo tipo={ticket.tipo} numero={ticket.numero} /> · {ticket.cliente?.nombre} · {haceCuanto(ticket.creado_en)}
               </p>
@@ -136,9 +136,9 @@ export default function DetalleTicket() {
                 )}
               </div>
               {ticket.origen === 'ia' && (
-                <div className="mt-4 rounded-lg border border-violeta/40 bg-superficie-alta p-4">
-                  <p className="flex items-center gap-1.5 text-xs font-semibold tracking-[0.08em] text-violeta-texto uppercase">
-                    <Sparkles aria-hidden className="size-3.5" /> Resumen del asistente
+                <div className="mt-4 rounded-lg border bg-superficie-alta p-4">
+                  <p className="flex items-center gap-1.5 text-sm font-medium text-texto">
+                    <Sparkles aria-hidden className="size-4 text-agua" /> Resumen del asistente
                   </p>
                   {/* Texto plano: lo escribió el modelo, no es de fiar como HTML */}
                   <p className="mt-2 whitespace-pre-wrap text-texto">{ticket.descripcion}</p>
@@ -146,7 +146,7 @@ export default function DetalleTicket() {
               )}
             </header>
 
-            <div className="rounded-xl border bg-card p-5 shadow-tarjeta">
+            <div className="rounded-xl border bg-card p-5">
               <Adjuntos
                 clienteId={ticket.cliente_id}
                 ticketId={ticket.id}
@@ -158,12 +158,12 @@ export default function DetalleTicket() {
               />
             </div>
 
-            <section aria-labelledby="titulo-conversacion" className="rounded-xl border bg-card p-5 shadow-tarjeta">
-              <h2 id="titulo-conversacion" className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">
+            <section aria-labelledby="titulo-conversacion" className="rounded-xl border bg-card p-5">
+              <h2 id="titulo-conversacion" className="text-base font-medium text-texto">
                 Conversación
               </h2>
               {errorMensajes && (
-                <p role="alert" className="mt-3 text-[var(--prioridad-urgente)]">
+                <p role="alert" className="mt-3 text-coral">
                   No se han podido cargar los mensajes.
                 </p>
               )}
@@ -189,8 +189,8 @@ export default function DetalleTicket() {
           </article>
 
           <aside aria-label="Gestión del ticket" className="grid content-start gap-4">
-            <section className="grid gap-4 rounded-xl border bg-card p-5 shadow-tarjeta">
-              <h2 className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">Gestión</h2>
+            <section className="grid gap-4 rounded-xl border bg-card p-5">
+              <h2 className="text-base font-medium text-texto">Gestión</h2>
               <div className="grid gap-1.5">
                 <Label htmlFor="estado-ticket">Estado</Label>
                 <Select value={ticket.estado} onValueChange={(valor) => cambiar({ estado: valor as Estado })} disabled={ticket.estado === 'cerrado'}>
@@ -229,13 +229,13 @@ export default function DetalleTicket() {
                   </SelectContent>
                 </Select>
               </div>
-              <p role="alert" className="text-sm text-[var(--prioridad-urgente)] empty:hidden">
+              <p role="alert" className="text-sm text-coral empty:hidden">
                 {errorCambio}
               </p>
             </section>
 
-            <section className="rounded-xl border bg-card p-5 shadow-tarjeta">
-              <h2 className="text-xs font-semibold tracking-[0.08em] text-texto-tenue uppercase">Datos</h2>
+            <section className="rounded-xl border bg-card p-5">
+              <h2 className="text-base font-medium text-texto">Datos</h2>
               <dl className="mt-3 grid gap-3">
                 <Dato nombre="Cliente">{ticket.cliente?.nombre ?? '—'}</Dato>
                 <Dato nombre="Web">{ticket.web ? `${ticket.web.nombre} (${ticket.web.dominio})` : 'Sin indicar'}</Dato>

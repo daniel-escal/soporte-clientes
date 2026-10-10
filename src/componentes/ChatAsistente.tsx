@@ -2,7 +2,7 @@ import { CircleCheck, Headset, SendHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { BurbujaMensaje, type MensajeChat } from '@/componentes/BurbujaMensaje'
 import { FormularioSolicitud } from '@/componentes/FormularioSolicitud'
-import { OrbeAsistente } from '@/componentes/OrbeAsistente'
+import { IndicadorAsistente } from '@/componentes/Costillas'
 import { TarjetaTicketCreado } from '@/componentes/TarjetaTicketCreado'
 import { Button } from '@/componentes/ui/button'
 import { Label } from '@/componentes/ui/label'
@@ -152,12 +152,12 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
   }
 
   const ultima = entradas.at(-1)
-  const estadoOrbe = pensando ? 'pensando' : ultima?.tipo === 'ticket' ? 'listo' : 'reposo'
+  const estadoAsistente = pensando ? 'pensando' : ultima?.tipo === 'ticket' ? 'listo' : 'reposo'
 
   return (
-    <section aria-labelledby="titulo-asistente" className="overflow-hidden rounded-xl border bg-card shadow-tarjeta">
+    <section aria-labelledby="titulo-asistente" className="overflow-hidden rounded-xl border bg-card">
       <header className="flex items-center gap-4 border-b p-4 sm:p-5">
-        <OrbeAsistente estado={estadoOrbe} className="size-14 sm:size-16" />
+        <IndicadorAsistente estado={estadoAsistente} />
         <div className="min-w-0">
           <h2 id="titulo-asistente" className="text-lg font-semibold text-texto">
             Asistente de soporte
@@ -188,7 +188,7 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
             if (entrada.tipo === 'resuelta') {
               return (
                 <li key={entrada.id} className="flex items-center justify-center gap-1.5 py-1 text-sm text-texto-suave">
-                  <CircleCheck aria-hidden className="size-4 text-[var(--estado-resuelto)]" />
+                  <CircleCheck aria-hidden className="size-4 text-agua" />
                   ¡Me alegro! Si necesitas algo más, escríbeme.
                 </li>
               )
@@ -196,7 +196,7 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
             return <BurbujaMensaje key={entrada.id} mensaje={entrada} />
           })}
           {pensando && (
-            <li className="w-fit max-w-[85%] rounded-lg rounded-bl-sm border border-violeta/40 px-4 py-3">
+            <li className="w-fit max-w-[85%] rounded-lg rounded-bl-sm border px-4 py-3">
               <p className="flex items-center gap-1.5 text-xs font-medium text-texto">
                 <Headset aria-hidden className="size-3.5 text-texto-suave" />
                 Asistente
@@ -233,7 +233,7 @@ export function ChatAsistente({ usuarioId, webs, onSolicitudCreada }: Props) {
       {fallo && (
         <div
           role="alert"
-          className="mx-4 mb-4 grid justify-items-start gap-3 rounded-lg border border-[color-mix(in_srgb,var(--prioridad-urgente)_45%,transparent)] p-4 sm:mx-5"
+          className="mx-4 mb-4 grid justify-items-start gap-3 rounded-lg border border-[color-mix(in_srgb,var(--coral)_45%,transparent)] p-4 sm:mx-5"
         >
           <p className="text-sm text-texto">{fallo}</p>
           <FormularioSolicitud

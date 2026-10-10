@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router'
-import { OrbeAsistente } from '@/componentes/OrbeAsistente'
+import { IndicadorAsistente } from '@/componentes/Costillas'
 import { useSesion } from '@/lib/sesion'
 
 /** Sin sesión, de vuelta a la entrada. RLS protege los datos igualmente: esto es solo navegación. */
@@ -10,7 +10,7 @@ export function RutaProtegida() {
     return (
       <div role="status" className="grid min-h-svh place-items-center">
         <div className="flex flex-col items-center gap-3 text-texto-suave">
-          <OrbeAsistente estado="pensando" className="size-14" />
+          <IndicadorAsistente estado="pensando" />
           Cargando…
         </div>
       </div>

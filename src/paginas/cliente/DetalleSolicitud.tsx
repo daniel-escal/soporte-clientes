@@ -69,7 +69,7 @@ export default function DetalleSolicitud() {
         )}
 
         {estado === 'error' && (
-          <p role="alert" className="mt-6 text-[var(--prioridad-urgente)]">
+          <p role="alert" className="mt-6 text-coral">
             No hemos podido cargar la solicitud. Prueba a recargar la página.
           </p>
         )}
@@ -102,11 +102,11 @@ export default function DetalleSolicitud() {
             </div>
 
             <section aria-labelledby="titulo-conversacion" className="mt-8">
-              <h2 id="titulo-conversacion" className="text-sm font-semibold tracking-[0.08em] text-texto-tenue uppercase">
+              <h2 id="titulo-conversacion" className="text-base font-medium text-texto">
                 Conversación
               </h2>
               {errorMensajes && (
-                <p role="alert" className="mt-3 text-[var(--prioridad-urgente)]">
+                <p role="alert" className="mt-3 text-coral">
                   No se han podido cargar los mensajes. Prueba a recargar la página.
                 </p>
               )}

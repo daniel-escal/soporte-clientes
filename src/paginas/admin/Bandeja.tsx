@@ -92,7 +92,7 @@ export default function Bandeja() {
     <div className="grid gap-4">
       <TarjetasKpi tickets={tickets} />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_16rem]">
-        <section aria-labelledby="titulo-bandeja" className="rounded-xl border bg-card shadow-tarjeta">
+        <section aria-labelledby="titulo-bandeja" className="rounded-xl border bg-card">
           <header className="grid gap-4 border-b p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h1 id="titulo-bandeja" aria-label={tickets ? `Bandeja, ${visibles.length} tickets` : 'Bandeja'} className="text-lg font-semibold text-texto">
@@ -100,7 +100,7 @@ export default function Bandeja() {
                 {tickets && <span className="cifras ml-1 text-sm font-normal text-texto-suave">{visibles.length}</span>}
               </h1>
               <span className="flex items-center gap-2 text-xs text-texto-suave">
-                <span aria-hidden className={cn('size-2 rounded-full', enDirecto ? 'bg-[var(--estado-resuelto)]' : enDirecto === null ? 'animate-pulse bg-texto-tenue' : 'bg-[var(--prioridad-urgente)]')} />
+                <span aria-hidden className={cn('size-2 rounded-full', enDirecto ? 'bg-agua' : enDirecto === null ? 'animate-pulse bg-texto-tenue' : 'bg-coral')} />
                 {enDirecto ? 'En directo' : enDirecto === null ? 'Conectando…' : 'Sin conexión en directo'}
               </span>
             </div>
@@ -113,7 +113,7 @@ export default function Bandeja() {
           </p>
 
           {error && (
-            <p role="alert" className="p-5 text-[var(--prioridad-urgente)]">
+            <p role="alert" className="p-5 text-coral">
               No hemos podido cargar la bandeja. Prueba a recargar la página.
             </p>
           )}
@@ -141,14 +141,14 @@ function FilaTicket({ ticket, nuevo }: { ticket: FilaBandeja; nuevo: boolean }) 
         to={`/admin/tickets/${ticket.id}`}
         className={cn(
           'group grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-superficie-alta sm:px-5',
-          // Brillo temporal para lo recién llegado (ESTETICA: el tercer brillo permitido, y solo un rato).
-          nuevo && 'bg-superficie-alta shadow-brillo-violeta',
+          // Lo recién llegado se distingue un rato por la superficie y la etiqueta "Nuevo" (sin brillos: ESTETICA).
+          nuevo && 'bg-superficie-alta',
         )}
       >
         <Avatar nombre={ticket.cliente?.nombre ?? '?'} />
         <span className="min-w-0">
           <span className="flex flex-wrap items-center gap-x-1 text-xs text-texto-tenue">
-            {/* --primary (#7c3aed): blanco a 5,70:1 (el violeta de marca no llega a 4,5 con texto pequeño) */}
+            {/* --primary es el agua y el texto va en --sobre-agua (10,6:1) */}
             {nuevo && <span className="mr-1 rounded-full bg-primary px-1.5 font-semibold text-primary-foreground">Nuevo</span>}
             <EtiquetaTipo tipo={ticket.tipo} numero={ticket.numero} /> · {ticket.cliente?.nombre} · {haceCuanto(ticket.creado_en)}
           </span>
@@ -160,8 +160,8 @@ function FilaTicket({ ticket, nuevo }: { ticket: FilaBandeja; nuevo: boolean }) 
               </span>
             )}
             {ticket.origen === 'ia' && (
-              <span className="flex items-center gap-1 text-violeta-texto">
-                <Sparkles aria-hidden className="size-3.5" /> Abierta por el asistente
+              <span className="flex items-center gap-1">
+                <Sparkles aria-hidden className="size-3.5 text-agua" /> Abierta por el asistente
               </span>
             )}
           </span>
@@ -189,7 +189,7 @@ function Avatar({ nombre }: { nombre: string }) {
     .map((palabra) => palabra[0]!.toUpperCase())
     .join('')
   return (
-    <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-superficie-alta text-xs font-semibold text-azul-texto">
+    <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-superficie-alta text-xs font-semibold text-texto-suave">
       {iniciales || '?'}
     </span>
   )

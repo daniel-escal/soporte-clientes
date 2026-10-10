@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import { CargandoPanel, RutaAdmin } from '@/componentes/RutaAdmin'
 import { RutaProtegida } from '@/componentes/RutaProtegida'
 import { ProveedorSesion } from '@/lib/sesion'
+import { aplicarTema } from '@/lib/tema'
 import DetalleSolicitud from '@/paginas/cliente/DetalleSolicitud'
 import Portal from '@/paginas/cliente/Portal'
 import Entrada from '@/paginas/Entrada'
@@ -58,6 +59,10 @@ const router = createBrowserRouter(
   ],
   { basename },
 )
+
+// Al navegar entre el portal y el panel cambia la luz (el panel, siempre oscuro).
+aplicarTema(router.state.location.pathname)
+router.subscribe(({ location }) => aplicarTema(location.pathname))
 
 export default function App() {
   return (

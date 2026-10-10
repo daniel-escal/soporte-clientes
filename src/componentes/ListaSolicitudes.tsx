@@ -20,7 +20,7 @@ export function ListaSolicitudes({ solicitudes }: { solicitudes: FilaSolicitud[]
         <li key={solicitud.id}>
           <Link
             to={`/portal/solicitudes/${solicitud.id}`}
-            className="group flex items-center gap-3 rounded-lg border bg-card p-4 shadow-tarjeta transition-colors hover:border-borde-control"
+            className="group flex items-center gap-3 rounded-lg border bg-card p-4 transition-colors hover:border-borde-control"
           >
             <span className="min-w-0 flex-1">
               <span className="flex flex-wrap items-center gap-x-1 text-xs text-texto-tenue">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, Outlet } from 'react-router'
-import { OrbeAsistente } from '@/componentes/OrbeAsistente'
+import { IndicadorAsistente } from '@/componentes/Costillas'
 import { useSesion } from '@/lib/sesion'
 import { supabase } from '@/lib/supabase'
 
@@ -39,7 +39,7 @@ export function CargandoPanel() {
   return (
     <div role="status" className="grid min-h-svh place-items-center">
       <div className="flex flex-col items-center gap-3 text-texto-suave">
-        <OrbeAsistente estado="pensando" className="size-14" />
+        <IndicadorAsistente estado="pensando" />
         Cargando…
       </div>
     </div>
@@ -52,10 +52,10 @@ function SinAcceso() {
       <h1 className="text-xl font-semibold text-texto">Esta zona es solo para el administrador</h1>
       <p className="text-texto-suave">Tu cuenta no tiene acceso al panel.</p>
       <p className="flex justify-center gap-4 text-sm">
-        <Link to="/portal" className="text-azul-texto hover:underline">
+        <Link to="/portal" className="text-agua hover:underline">
           Ir a tu espacio
         </Link>
-        <Link to="/admin/entrar" className="text-azul-texto hover:underline">
+        <Link to="/admin/entrar" className="text-agua hover:underline">
           Entrar con otra cuenta
         </Link>
       </p>

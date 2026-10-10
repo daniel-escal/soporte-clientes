@@ -1,10 +1,15 @@
 <!doctype html>
-<html lang="es" class="dark">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Asistente de soporte con IA para los clientes de daniel-escal.es: resuelve lo sencillo al momento y abre una incidencia cuando hace falta una persona." />
-    <meta name="theme-color" content="#23243b" />
+    <meta name="theme-color" content="#0a0f14" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f6f6" media="(prefers-color-scheme: light)" />
+    <!-- El panel es siempre oscuro: se marca antes de pintar (después lo mantiene src/lib/tema.ts) -->
+    <script>
+      if (/(^|\/)admin(\/|$)/.test(location.pathname)) document.documentElement.dataset.tema = 'oscuro'
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Soporte · daniel-escal.es</title>
   </head>

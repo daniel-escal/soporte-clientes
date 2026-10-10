@@ -55,7 +55,7 @@ export default function AccesoAdmin() {
       </header>
 
       <main className="grid place-items-center px-4 pb-16">
-        <form noValidate onSubmit={entrar} className="grid w-full max-w-sm gap-4 rounded-xl border bg-card p-6 shadow-tarjeta">
+        <form noValidate onSubmit={entrar} className="grid w-full max-w-sm gap-4 rounded-xl border bg-card p-6">
           <div>
             <h1 className="text-xl font-semibold text-texto">Panel de soporte</h1>
             <p className="mt-1 text-sm text-texto-suave">Acceso solo para el administrador.</p>
@@ -70,7 +70,7 @@ export default function AccesoAdmin() {
             <Input id="contrasena" name="contrasena" type="password" autoComplete="current-password" required />
           </div>
 
-          <p role="alert" className="min-h-5 text-sm text-[var(--prioridad-urgente)]">
+          <p role="alert" className="min-h-5 text-sm text-coral">
             {error}
           </p>
 

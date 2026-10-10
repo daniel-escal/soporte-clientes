@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { InsigniaEstado, InsigniaPrioridad } from '@/componentes/Insignias'
 import { Marca } from '@/componentes/Marca'
-import { OrbeAsistente } from '@/componentes/OrbeAsistente'
+import { IndicadorAsistente } from '@/componentes/Costillas'
 import { Button } from '@/componentes/ui/button'
 import { useSesion } from '@/lib/sesion'
 import { supabase } from '@/lib/supabase'
@@ -23,7 +23,7 @@ export default function Entrada() {
 
       <main className="mx-auto grid max-w-6xl gap-10 px-4 pt-6 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:pt-14">
         <section aria-labelledby="titulo-entrada">
-          <h1 id="titulo-entrada" className="text-3xl leading-tight font-semibold text-balance text-texto sm:text-4xl lg:text-[2.75rem]">
+          <h1 id="titulo-entrada" className="text-3xl leading-tight font-normal tracking-tight text-balance text-texto sm:text-4xl lg:text-[2.75rem]">
             Cuéntale el problema al asistente. Si no puede resolverlo, abre la incidencia por ti.
           </h1>
           <p className="mt-4 max-w-xl text-base text-pretty text-texto-suave">
@@ -73,7 +73,7 @@ function AccesoDemo() {
         <p className="text-sm text-texto-tenue">Demo con datos ficticios y sin registro.</p>
       </div>
       {/* Vacío no ocupa sitio, pero sigue en la página para que el lector de pantalla anuncie el error */}
-      <p role="alert" className="mt-3 text-sm text-[var(--prioridad-urgente)] empty:mt-0">
+      <p role="alert" className="mt-3 text-sm text-coral empty:mt-0">
         {error}
       </p>
       <Link to="/admin/entrar" className="mt-2 inline-flex min-h-11 items-center text-sm text-texto-suave hover:text-texto hover:underline">
@@ -83,27 +83,26 @@ function AccesoDemo() {
   )
 }
 
-/** Composición tipo bento (ESTETICA): la conversación manda, el ticket y los pasos la acompañan. */
+/** Vista previa: la conversación manda; el ticket y los pasos la acompañan. */
 function VistaPrevia() {
   return (
     <div aria-label="Vista previa del producto" role="group" className="grid gap-3 sm:grid-cols-2">
-      <article className="relative overflow-hidden rounded-lg border bg-card shadow-tarjeta sm:col-span-2">
-        <div aria-hidden className="degradado-marca h-1" />
+      <article className="rounded-lg border bg-card sm:col-span-2">
         <div className="flex gap-4 p-5">
-          <OrbeAsistente estado="pensando" className="size-16" />
+          <IndicadorAsistente estado="pensando" />
           <div className="min-w-0 flex-1 space-y-2.5">
             <p className="text-xs font-medium text-texto-tenue">Conversación de ejemplo</p>
             <p className="ml-auto w-fit max-w-[90%] rounded-lg rounded-br-sm bg-superficie-alta px-3 py-2 text-sm text-texto">
               El formulario de contacto de mi web no envía los mensajes.
             </p>
-            <p className="w-fit max-w-[90%] rounded-lg rounded-bl-sm border border-violeta/40 px-3 py-2 text-sm text-texto">
+            <p className="w-fit max-w-[90%] rounded-lg rounded-bl-sm border px-3 py-2 text-sm text-texto">
               ¿Desde cuándo te pasa? ¿Ves algún error al pulsar «Enviar»? Con eso lo dejo listo para Daniel.
             </p>
           </div>
         </div>
       </article>
 
-      <article className="rounded-lg border bg-card p-5 shadow-tarjeta">
+      <article className="rounded-lg border bg-card p-5">
         <p className="cifras text-xs text-texto-tenue">Incidencia #128 · hace 2 min</p>
         <h2 className="mt-1.5 text-sm font-semibold text-texto">El formulario de contacto no envía</h2>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-texto-suave">
@@ -114,8 +113,8 @@ function VistaPrevia() {
           <InsigniaEstado estado="en_curso" />
         </div>
         <div className="mt-4 border-t pt-3">
-          <p className="flex items-center gap-1.5 text-xs font-medium text-violeta-texto">
-            <Sparkles aria-hidden className="size-3.5" /> Resumen del asistente
+          <p className="flex items-center gap-1.5 text-xs font-medium text-texto">
+            <Sparkles aria-hidden className="size-3.5 text-agua" /> Resumen del asistente
           </p>
           <p className="mt-1 text-xs text-texto-suave">
             Desde el martes, el formulario de /contacto no envía. No aparece ningún error. Pasa en el móvil y en el ordenador.
@@ -123,12 +122,12 @@ function VistaPrevia() {
         </div>
       </article>
 
-      <article className="rounded-lg border bg-card p-5 shadow-tarjeta">
+      <article className="rounded-lg border bg-card p-5">
         <h2 className="text-sm font-semibold text-texto">Cómo funciona</h2>
         <ol className="mt-3 space-y-3">
           {PASOS.map(({ icono: Icono, titulo, texto }) => (
             <li key={titulo} className="flex gap-2.5">
-              <Icono aria-hidden className="mt-0.5 size-4 shrink-0 text-azul-texto" />
+              <Icono aria-hidden className="mt-0.5 size-4 shrink-0 text-agua" />
               <span>
                 <span className="block text-xs font-medium text-texto">{titulo}</span>
                 <span className="block text-xs text-texto-suave">{texto}</span>

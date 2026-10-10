@@ -69,7 +69,7 @@ export function CuadroRespuesta({ conversacionId, autor, etiqueta, placeholder, 
         className="min-h-20 md:text-base"
       />
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p role="alert" className="text-sm text-[var(--prioridad-urgente)]">
+        <p role="alert" className="text-sm text-coral">
           {error}
         </p>
         <Button type="submit" variant="marca" size="tactil" disabled={!texto.trim() || enviando} className="ml-auto">

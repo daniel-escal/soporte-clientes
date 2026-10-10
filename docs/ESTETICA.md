@@ -1,141 +1,159 @@
-# Dirección estética
+# Dirección estética: Umbracle
 
-Fuente: imagen de referencia que aportó Daniel el 2026-10-08, guardada en local en `docs/referencias/estetica-referencia.png`. Esa carpeta no se sube al repositorio porque no conocemos la licencia de la imagen.
+Aprobada por Daniel el 2026-10-10. Sustituye a la dirección anterior (índigo con degradado azul→violeta y brillos), que se resume al final como historial.
 
-La imagen es una composición de pantallas de interfaz (probablemente generada por IA: sus textos no se pueden leer). Por eso **se extrae el ambiente y el lenguaje visual, no una maqueta literal**.
+**La idea:** la Ciudad de las Artes y las Ciencias de noche. Hormigón blanco sobre cielo oscuro, costillas que se repiten y el agua turquesa iluminada. Lo futurista no lo ponen los efectos, sino la precisión: líneas finas, mucho aire y cifras grandes y ligeras.
 
-## Rasgos que se extraen
+Para quién está pensada:
 
-1. **Solo modo oscuro.** Fondo índigo grisáceo, con los paneles **más oscuros que el fondo**. Cada panel lleva un borde sutil y una sombra suave, así que parece flotar sobre un lienzo más claro.
-2. **Acentos azul eléctrico y violeta**, unidos en un **degradado azul → violeta** que funciona como firma. Hay toques de magenta y cian solo en los brillos.
-3. **Brillo neón en pocos elementos.** El más claro es el anillo circular de la tarjeta central, que rodea un **auricular de soporte**. En nuestro producto será el **orbe del asistente de IA**.
-4. **Composición modular tipo "bento":** tarjetas de distintos tamaños en una rejilla, cada una con un trabajo concreto.
-5. **Densidad alta de información:**
-   - textos pequeños y etiquetas tenues;
-   - listas con avatares circulares;
-   - barras horizontales de progreso con degradado;
-   - interruptores, botones en forma de pastilla y botones circulares con icono.
-6. **Cabeceras de tarjeta con franja de color** (azul o violeta) en algunos paneles, para marcar el panel activo o destacado.
+- **Daniel**, en el panel, a menudo de noche: oscuro, denso y tranquilo.
+- **Sus clientes**, en el móvil, dentro de la tienda o en la calle: tienen que leerla al sol.
+- **Quien la evalúe**: tiene que parecer una herramienta seria, no una plantilla.
+
+La propuesta completa, con maquetas, está en el Second Brain de Daniel: `01-Proyectos/soporte-clientes/propuesta-estetica-definitiva.html`.
+
+## Las reglas
+
+1. **Oscuro de serie; el portal sigue al teléfono.**
+   - El panel (`/admin/*`) es siempre oscuro.
+   - La entrada y el portal del cliente se ven en oscuro o en claro según el modo del sistema.
+2. **Un solo acento: agua.** Lo llevan:
+   - el botón principal;
+   - los enlaces;
+   - el foco;
+   - las costillas encendidas;
+   - las barras de datos;
+   - los iconos que marcan al asistente.
+
+   Nada más lleva color.
+3. **El color con significado se gana.**
+   - El coral marca solo lo urgente y los errores.
+   - El sodio (ámbar) marca solo "esperando al cliente".
+   - Siempre van con su texto o su icono, nunca solos.
+4. **Cero degradados, brillos y sombras de color.** La profundidad sale de tres superficies y una línea fina. Si algo necesita brillo para destacar, el problema es la jerarquía. Basta un brillo para que esto parezca otra plantilla de IA.
+5. **Dos tipos de la misma familia.**
+   - Red Hat Display para títulos y cifras; las cifras grandes van ligeras (300).
+   - Red Hat Text para leer.
+   - Las dos están alojadas en el proyecto (`@fontsource-variable/red-hat-display` y `red-hat-text`), sin pedir nada a Google.
+6. **Un solo gesto: las costillas.** Es la única animación con intención:
+   - cuando cambia el estado, se enciende la siguiente costilla con un barrido corto;
+   - mientras la IA piensa, las costillas hacen un barrido.
+
+   Con "reducir movimiento", no se anima nada.
+7. **Los controles no se disfrazan.** Botones, campos, menús y navegación se ven como lo que son (shadcn/ui). La estética solo pone el tipo, la paleta y el gesto.
 
 ## Tokens
 
-Los contrastes son **medidos** (fórmula WCAG), no estimados. Se recalculan si cambia algún color.
+Los contrastes son **medidos** (fórmula WCAG) y son el peor caso sobre las tres superficies. `tests/tema.test.ts` los comprueba en las dos paletas: si cambias un color, el test dirá si sigue cumpliendo AA.
 
-### Superficies
+| Token | Oscuro | Claro | Uso y contraste mínimo (oscuro / claro) |
+| --- | --- | --- | --- |
+| `--fondo` | `#0a0f14` | `#f3f6f6` | Lienzo |
+| `--superficie` | `#11181f` | `#ffffff` | Tarjetas y paneles |
+| `--superficie-alta` | `#18212a` | `#e9eef0` | Campos, burbujas propias y piezas dentro de una tarjeta |
+| `--borde` | `#2a3743` | `#d3dbde` | Línea que separa; decorativa, no informa |
+| `--borde-control` | `#647581` | `#73818a` | Campos y casillas: 3,41 / 3,43 (WCAG 1.4.11 pide 3:1) |
+| `--texto` | `#e8edef` | `#0a0f14` | Hueso / tinta: 13,8 / 16,4 |
+| `--texto-suave` | `#9aa8b1` | `#4a5863` | Niebla: 6,7 / 6,3 |
+| `--texto-tenue` | `#7f8d97` | `#5f6d78` | Metadatos: 4,78 / 4,55 |
+| `--agua` | `#3fd5cb` | `#097069` | El acento; también el foco: 9,0 / 5,08 |
+| `--sobre-agua` | `#0a0f14` | `#ffffff` | Texto del botón principal: 10,6 / 5,94 |
+| `--coral` | `#ff7a66` | `#b93a27` | Urgente y errores: 6,4 / 4,85 |
+| `--sodio` | `#e9b44c` | `#8a5a00` | Esperando al cliente: 8,6 / 5,06 |
+| `--costilla-apagada` | `#2a3743` | `#c9d3d7` | Frente a la encendida: 6,7 / 3,90 |
 
-| Token | Valor | Uso |
-| --- | --- | --- |
-| `--fondo` | `#23243b` | Lienzo de la aplicación. Puede llevar un degradado radial muy suave, más claro arriba a la izquierda |
-| `--superficie` | `#181a2c` | Tarjetas y paneles (más oscuros que el fondo, como en la referencia) |
-| `--superficie-alta` | `#20223a` | Campos, menús desplegables y elementos dentro de una tarjeta |
-| `--borde` | `#2f3253` | Borde decorativo de las tarjetas (1,39:1, no transmite información) |
-| `--borde-control` | `#6e72a3` | Borde de campos y controles: 3,76:1 sobre superficie, 3,40:1 sobre superficie alta y 3,32:1 sobre fondo (WCAG 1.4.11 pide 3:1) |
+El turquesa de día es más oscuro que el de noche: es el mismo acento, pero `#3fd5cb` no pasa el contraste sobre blanco.
 
-### Texto (mínimo 4,5:1)
+### Forma
 
-| Token | Valor | Sobre fondo | Sobre superficie | Sobre superficie alta |
-| --- | --- | --- | --- | --- |
-| `--texto` | `#e9eaf5` | 12,66 | 14,35 | 12,99 |
-| `--texto-suave` | `#a7aac6` | 6,64 | 7,53 | 6,81 |
-| `--texto-tenue` | `#8b8fb2` | 4,81 | 5,45 | 4,94 |
-| `--azul-texto` | `#7aa7ff` | 6,34 | 7,19 | 6,51 |
-| `--violeta-texto` | `#b49cff` | 6,59 | 7,47 | 6,76 |
-
-### Acentos
-
-| Token | Valor | Uso y contraste |
-| --- | --- | --- |
-| `--azul` | `#3b82f6` | Barras, iconos y elementos gráficos (4,12 sobre fondo, 4,67 sobre superficie) |
-| `--violeta` | `#8b5cf6` | Barras, iconos y elementos gráficos (3,58 sobre fondo, 4,06 sobre superficie) |
-| `--magenta` | `#d946ef` | **Solo brillos**: nunca en texto ni como único indicador |
-| `--cian` | `#38bdf8` | **Solo brillos** del orbe |
-| `--foco` | `#b49cff` | Contorno de foco: 6,59 sobre fondo y 7,47 sobre superficie |
-| `--degradado-marca` | `linear-gradient(90deg, #3b82f6, #8b5cf6)` | Barras de datos, franja de cabecera y anillo del orbe |
-| `--degradado-boton` | `linear-gradient(90deg, #2563eb, #7c3aed)` | Botón principal con texto blanco: 5,17 en el extremo azul y 5,70 en el violeta |
-
-Nota: el degradado de marca (`#3b82f6`) **no** sirve para botones con texto blanco (3,75:1). Por eso el botón usa los tonos más oscuros.
-
-### Estados y prioridades
-
-Las insignias llevan el texto en el color del estado sobre un tinte del mismo color al 16 % encima de `--superficie`. **Siempre texto + icono, nunca solo color.**
-
-| Estado / prioridad | Color | Contraste sobre su tinte |
-| --- | --- | --- |
-| Abierto | `#7aa7ff` | 5,37 |
-| En curso | `#b49cff` | 5,55 |
-| Esperando al cliente | `#fbbf24` | 7,32 |
-| Resuelto | `#34d399` | 6,49 |
-| Cerrado | `#a7aac6` | 5,59 |
-| Prioridad urgente | `#fb7185` | 5,01 |
-| Prioridad alta | `#fb923c` | 5,77 |
-| Prioridad media / baja | colores de "abierto" / "cerrado" | 5,37 / 5,59 |
-
-### Forma, tipografía y movimiento
-
-- **Radios con jerarquía** (no todo igual de redondeado):
+- **Radios con jerarquía:**
   - tarjetas: 12 px;
   - controles y botones: 8 px;
-  - insignias, pastillas y avatares: completamente redondos.
-- **Sombra:** una sola de elevación para tarjetas, `0 8px 24px rgb(0 0 0 / 0.35)`. Sin capas de sombras.
-- **Tipografía:** Inter Variable alojada en el propio proyecto (`@fontsource-variable/inter`, sin peticiones a Google Fonts).
-  - Tamaño base de 14 px en el panel (denso, como la referencia) y de 16 px en el chat del cliente (lectura en el móvil).
-  - Cifras tabulares (`tabular-nums`) en los KPI y en las tablas.
-- **Brillo:** `0 0 24px rgb(139 92 246 / 0.45)` (violeta) y `0 0 32px rgb(56 189 248 / 0.35)` (cian, solo en el orbe).
-- **Movimiento:** el orbe "respira" mientras la IA piensa. Con `prefers-reduced-motion: reduce`, nada se anima y el estado se indica con texto ("Pensando…").
+  - burbujas: 12 px, con la esquina del lado de quien habla más cerrada;
+  - chips y avatares: completamente redondos.
+- **Sin sombras en tarjetas.** La separación la dan la superficie y la línea. Solo los menús desplegables y los diálogos llevan la sombra neutra de shadcn, porque flotan sobre el contenido.
+- **Tamaños:** 14 px de base en el panel (denso) y 16 px en el chat del cliente (lectura en el móvil).
+- Cifras tabulares (`cifras`) en los KPI, la bandeja y los números de ticket.
 
-## Reglas para que no parezca una plantilla genérica
+## Las costillas
 
-Esta estética coincide con la **"estética de IA" que la skill `frontend-ui-engineering` desaconseja**: morado e índigo, degradados, brillos y sombras. Se usa por decisión de Daniel y porque encaja con el tema, ya que el producto es literalmente un asistente de soporte con IA. Para que funcione:
+Son cuatro, como una batería, y **solo cuentan el estado**. La prioridad va aparte.
 
-1. **El degradado es una señal, no un fondo.** Solo se usa en:
-   - el botón principal;
-   - las barras de datos;
-   - la franja del panel activo;
-   - el anillo del orbe.
+| Estado | Encendidas | Color |
+| --- | --- | --- |
+| Abierto | 1 | agua |
+| En curso | 2 | agua |
+| Esperando al cliente | 2 | **sodio**: es una pausa, no un avance |
+| Resuelto | 3 | agua |
+| Cerrado | 4 | agua: carga completa |
 
-   Nunca va detrás de bloques de texto ni en fondos de página.
-2. **Como mucho dos elementos con brillo por pantalla:** el orbe y el botón principal (en hover y foco), más un ticket urgente recién llegado de forma temporal.
-3. **El resto es plano:** superficies sólidas, bordes sutiles y una sola sombra.
-   - Los interruptores y los radios marcados van en violeta sólido (`--violeta`, 4,06:1 sobre superficie), no con el degradado.
-   - Lo que pinta el navegador también lleva la paleta: la selección de texto, el cursor de los campos, las barras de scroll (finas, en `--borde-control`) y los subrayados.
-4. **El contenido manda en la composición.** El bento se ordena por importancia:
-   - la bandeja de tickets ocupa la tarjeta grande;
-   - los KPI van en tarjetas pequeñas;
-   - el orbe solo aparece en el chat.
-5. **Contenido realista** en las demos: negocios, webs e incidencias creíbles. Nada de "Lorem ipsum".
-6. **Accesibilidad por delante del efecto:**
-   - texto ≥ 4,5:1;
-   - controles y foco ≥ 3:1;
-   - estados con texto e icono.
+- **Componente:** `Costillas` en `src/componentes/Costillas.tsx`.
+  - Siempre va junto al texto del estado, así que no se anuncia (`aria-hidden`).
+  - Al cambiar de estado, el color pasa con un retraso escalonado de 90 ms por costilla.
+- **El asistente:** `IndicadorAsistente` muestra las costillas de la marca dentro de una pieza:
+  - en reposo: tres en niebla y la última en agua;
+  - pensando: barrido (`animate-barrido`, solo con `motion-safe`);
+  - con la solicitud pasada a Daniel: las cuatro encendidas.
+- **La marca** (`Marca.tsx` y `public/favicon.svg`): cuatro costillas en hueso con la última en agua.
+- **La urgencia:** "Prioridad urgente" en coral con su icono. El resto de prioridades van en texto suave con su flecha.
 
-## Correspondencia con la referencia
+## Las dos luces
 
-| Elemento de la referencia | En nuestro producto |
-| --- | --- |
-| Tarjeta central con auricular y anillo neón | Orbe del asistente en el chat del cliente (estados: en reposo, pensando, ticket creado) |
-| Tarjeta con filas, avatares y barras azules | Bandeja de tickets del panel (cliente, web, prioridad, estado, hace cuánto) |
-| Tarjetas pequeñas con barras de progreso | KPI: abiertos, urgentes, % resuelto por la IA, tiempo hasta la primera respuesta |
-| Tarjeta ancha con barras azul y violeta y botón circular | Conversación del ticket con el cuadro de respuesta del administrador |
-| Paneles con franja de color en la cabecera | Panel activo o seleccionado (ticket abierto en el detalle) |
-| Columna estrecha con lista e iconos | Barra lateral de navegación del panel |
+- **Paletas:** `:root` lleva la paleta oscura. La clara está en `@media (prefers-color-scheme: light)` sobre `:root:not([data-tema='oscuro'])`.
+- **El panel, siempre oscuro:** lleva `data-tema="oscuro"` en `<html>`.
+  - `index.html` lo pone antes de pintar, para que no haya un destello claro.
+  - `src/lib/tema.ts` lo mantiene al navegar.
+- **Variantes `dark:` de shadcn:** el `@custom-variant dark` de `tema.css` sigue la misma regla (modo del sistema o `data-tema="oscuro"`).
+- **Barra del navegador:** `theme-color` lleva un valor por modo.
+
+## Lo que pinta el navegador
+
+También lleva la paleta:
+
+- la selección, en agua al 30 %;
+- el cursor de los campos, en agua;
+- las barras de scroll, finas y en `--borde-control`;
+- el contorno de foco, en agua;
+- los subrayados, con `text-underline-offset`.
 
 ## Implementación (Tailwind v4 + shadcn/ui)
 
-- Los tokens se declaran en `src/estilos/tema.css` con `@theme` de Tailwind v4.
-- Se mapean a las variables que usa shadcn/ui:
+Los tokens se declaran en `src/estilos/tema.css` y se mapean a las variables de shadcn/ui:
 
 | Variable de shadcn | Token |
 | --- | --- |
 | `--background` | `--fondo` |
 | `--foreground` | `--texto` |
 | `--card` / `--popover` | `--superficie` |
-| `--muted` | `--superficie-alta` |
+| `--muted` / `--secondary` / `--accent` | `--superficie-alta` |
 | `--muted-foreground` | `--texto-suave` |
 | `--border` | `--borde` |
 | `--input` | `--borde-control` |
-| `--ring` | `--foco` |
-| `--primary` | `#7c3aed` (el botón principal usa además `--degradado-boton`) |
-| `--primary-foreground` | `#ffffff` |
-| `--destructive` | `#fb7185` |
+| `--ring` | `--agua` |
+| `--primary` | `--agua` |
+| `--primary-foreground` | `--sobre-agua` |
+| `--destructive` | `--coral` |
 
-- `color-scheme: dark` en `<html>`. No hay modo claro.
+Utilidades de color disponibles:
+
+- `bg-agua`, `text-agua`, `text-sobre-agua`;
+- `text-coral`, `text-sodio`;
+- `bg-costilla-apagada`;
+- además de las de superficie y texto.
+
+El botón principal es la variante `marca` de `Button`: agua sólida y, al pasar por encima, un poco más cerca del color del texto.
+
+## Historial
+
+**Del 2026-10-08 al 2026-10-10** se usó la dirección de una imagen de referencia, que está guardada solo en local (`docs/referencias/`):
+
+- fondo índigo `#23243b`;
+- degradado azul→violeta como firma;
+- brillo neón en un orbe con auricular;
+- Inter.
+
+Daniel pidió alternativas y eligió esta. Se retiró por tres motivos:
+
+- era la "estética de IA" más repetida;
+- se leía mal al sol;
+- el degradado y los brillos no comunicaban nada del producto.

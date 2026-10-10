@@ -240,7 +240,7 @@ Versiones comprobadas en npm el 2026-10-08.
 | Pieza | Elección |
 | --- | --- |
 | Frontend | **Vite 8 + React 19 + TypeScript 6** (el que trae la plantilla oficial de Vite), React Router 8 |
-| UI | Tailwind CSS 4 + **shadcn/ui** (componentes accesibles sobre Radix), iconos lucide-react, Inter Variable alojada en el proyecto |
+| UI | Tailwind CSS 4 + **shadcn/ui** (componentes accesibles sobre Radix), iconos lucide-react, Red Hat Display y Red Hat Text alojadas en el proyecto |
 | Backend | **Supabase**: Postgres con RLS, Auth (anónimo + email/contraseña), Realtime y **Edge Functions** (Deno) para la IA |
 | IA | **Gemini API** (`@google/genai`), modelo configurable por secreto |
 | Validación | zod 4, la misma en el frontend y en la Edge Function |
@@ -308,7 +308,7 @@ src/
   lib/                       → Cliente de Supabase, tipos generados de la BD, formato de fechas
   dominio/                   → Lógica pura y testeable: estados y transiciones, prioridades, KPI
   componentes/ui/            → Componentes de shadcn/ui
-  componentes/               → OrbeAsistente, InsigniaEstado, TarjetaKpi, BarraProgreso…
+  componentes/               → Costillas, IndicadorAsistente, InsigniaEstado, TarjetasKpi…
   paginas/cliente/           → Chat, MisIncidencias, DetalleIncidencia
   paginas/admin/             → Bandeja, DetalleTicket, Faq (cargadas aparte)
 supabase/
@@ -415,7 +415,7 @@ export function puedeCambiar(de: Estado, a: Estado): boolean {
 6. **Panel:** bandeja con filtros, detalle, cambio de estado y prioridad (solo transiciones válidas), respuesta y KPI que cuadran con los datos.
 7. **Tiempo real:** un ticket nuevo aparece en el panel en ≤ 3 s, y las respuestas llegan al cliente, sin recargar.
 8. **Estética:**
-   - cumple `docs/ESTETICA.md` (tokens y reglas de degradado y brillo);
+   - cumple `docs/ESTETICA.md` (tokens de las dos luces y reglas del acento y las costillas);
    - contrastes AA medidos;
    - respeta `prefers-reduced-motion`;
    - aprobada por Daniel en el primer punto de revisión.
