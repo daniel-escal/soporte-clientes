@@ -42,6 +42,7 @@ Se ejecutan con el MCP de Supabase y se deshacen al terminar.
 | `rls_adjuntos.sql` | Carpeta ajena, ticket cerrado, más de 10 fotos, borrar o renombrar | ✅ |
 | `respuestas.sql` | Primera respuesta y vuelta a "en curso" | ✅ (repetido hoy) |
 | `seguimiento.sql` | Aviso, reapertura, cierre a los 3 días, recordatorio y "resuelta" a la semana | ✅ |
+| `avisos.sql` | El ticket nuevo avisa, el sembrado no; ni clientes ni anónimos leen o envían avisos | ✅ (2026-10-11) |
 | `rls_resuelta_ia.sql` | Solo conversaciones propias, activas y con respuesta de la IA | ✅ (2026-10-09) |
 | `rls_identidad.sql` | Perfiles, clientes y webs | ✅ (2026-10-08) |
 
@@ -96,5 +97,7 @@ Se ejecutan con el MCP de Supabase y se deshacen al terminar.
 2. **Si la reunión es tarde, o tras ensayar, volver a lanzarlo justo antes:** `select privado.sembrar_demo();` en el editor SQL de Supabase (o `supabase/seed.sql`). Así el #110 dirá "hace 14 minutos".
 3. **No lanzar `test:rls` ni `atacar.mjs` después.** Si hace falta, volver a lanzar la función.
 4. **Abrir las sesiones de demostración después de renovar los datos.** La función borra las sesiones anónimas, y una sesión abierta antes deja de funcionar ("Salir" y volver a entrar).
-5. **Comprobar que el proyecto de Supabase no está en pausa** (plan gratuito) y que las tareas de pg_cron siguen activas.
-6. **Entrar en `/admin/entrar` con su cuenta** de administrador antes de empezar.
+5. **Lanzar la comprobación:** `node scripts/comprobar-demo.mjs`. Revisa la web, Supabase (que no esté en pausa), el negocio de demostración, la FAQ, el asistente y el tiempo real, y dice qué hacer si algo falla. Con `--ticket` abre además una solicitud de prueba y dispara el aviso de Telegram; después hay que volver a sembrar.
+6. **Comprobar que las tareas de pg_cron siguen activas** (el script no las ve).
+7. **Entrar en `/admin/entrar` con su cuenta** de administrador antes de empezar.
+8. **Avisos por Telegram** (desde el 2026-10-11): cada ticket nuevo llega al móvil de Daniel. Se activan al guardar en Vault `telegram_bot_token` y `telegram_chat_id`, y se prueban con `select privado.probar_aviso_telegram();`. Para ver cómo han ido: `select * from privado.ultimos_avisos();`. Los tickets que siembra la demo no avisan.
