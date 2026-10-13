@@ -94,7 +94,10 @@ Son cuatro, como una batería, y **solo cuentan el estado**. La prioridad va apa
   - en reposo: tres en niebla y la última en agua;
   - pensando: barrido (`animate-barrido`, solo con `motion-safe`);
   - con la solicitud pasada a Daniel: las cuatro encendidas.
-- **La marca** (`Marca.tsx` y `public/favicon.svg`): cuatro costillas en hueso con la última en agua.
+- **La marca** (`Marca.tsx` y `public/favicon-costillas.svg`): cuatro costillas en hueso con la última en agua.
+  - En el favicon, las costillas son más finas y caen en múltiplos de 4 del viewBox de 64, es decir, en píxeles enteros a 16 px; si no, se ven borrosas en la pestaña.
+  - `public/apple-touch-icon.png` (180×180) es el mismo dibujo a sangre, sin esquinas redondeadas porque iOS aplica su propia máscara.
+  - Si se cambia el dibujo, se cambia también el nombre del archivo: los navegadores guardan el favicon en caché durante mucho tiempo.
 - **La urgencia:** "Prioridad urgente" en coral con su icono. El resto de prioridades van en texto suave con su flecha.
 
 ## Las dos luces

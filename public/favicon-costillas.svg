@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Costillas alineadas a la rejilla de 16 px (múltiplos de 4): a tamaño de pestaña salen nítidas -->
+  <rect width="64" height="64" rx="14" fill="#0a0f14"/>
+  <rect x="12" y="16" width="4" height="32" rx="2" fill="#e8edef"/>
+  <rect x="24" y="16" width="4" height="32" rx="2" fill="#e8edef"/>
+  <rect x="36" y="16" width="4" height="32" rx="2" fill="#e8edef"/>
+  <rect x="48" y="16" width="4" height="32" rx="2" fill="#3fd5cb"/>
+</svg>
