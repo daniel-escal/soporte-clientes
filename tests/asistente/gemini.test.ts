@@ -158,6 +158,37 @@ describe('crearGemini', () => {
     expect(resultado.intentos[0]).toMatchObject({ modelo: 'lento', resultado: 'timeout' })
   })
 
+  test('escalonado: si un modelo tarda, lanza el siguiente sin cancelarlo y gana el primero que responde', async () => {
+    vi.useFakeTimers()
+    try {
+      const cancelados: string[] = []
+      const ia = crearGemini({
+        apiKey: 'k',
+        modelos: ['lento', 'rapido', 'sobra'],
+        escalonadoMs: 100,
+        fetchImpl: (url, init) => {
+          const modelo = String(url).replace(URL_BASE, '').replace(':generateContent', '')
+          init!.signal!.addEventListener('abort', () => cancelados.push(modelo))
+          if (modelo === 'rapido') return new Promise((r) => setTimeout(() => r(respuestaJson(candidato({ text: '{}' }))), 50))
+          return colgado(url, init)
+        },
+      })
+      const promesa = ia.generar({ instrucciones: 'x', contenidos })
+      await vi.advanceTimersByTimeAsync(200)
+      const resultado = await promesa
+      // 'rapido' empieza a los 100 ms y responde a los 150; 'lento' seguía en marcha y se cancela.
+      expect(resultado.modelo).toBe('rapido')
+      expect(resultado.intentos.map((i) => [i.modelo, i.resultado])).toEqual([
+        ['lento', 'timeout'],
+        ['rapido', 'ok'],
+      ])
+      expect(cancelados).toContain('lento')
+      expect(cancelados).not.toContain('sobra') // no llegó a lanzarse
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   test('respeta el presupuesto total: no empieza otro intento si ya no queda tiempo', async () => {
     // Temporizadores simulados: con los reales, el resultado dependía de la velocidad de la máquina (falló en CI).
     vi.useFakeTimers()

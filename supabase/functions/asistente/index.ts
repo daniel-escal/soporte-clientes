@@ -21,7 +21,9 @@ const ORIGENES_PERMITIDOS = ['https://daniel-escal.github.io', 'http://localhost
 // Modelos rápidos de tres familias distintas, para que una saturación no los tumbe a todos; si uno
 // falla se prueba el siguiente (todos con nivel gratuito). Medido el 08/10/2026 con thinkingLevel
 // 'low': 3.6-flash respondió en ~2,3 s; 3.8-flash (el más nuevo, pensado para agentes) superó los 8 s.
-const MODELOS_POR_DEFECTO = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']
+// El 13/10/2026, con Gemini saturado, 3.1-flash-lite era el único que respondía (3-7 s) y
+// 3.5-flash-lite se colgaba siempre: por eso 3.1 va segundo.
+const MODELOS_POR_DEFECTO = ['gemini-3.6-flash', 'gemini-3.1-flash-lite', 'gemini-3.5-flash-lite']
 // Límites por hora (spec): protegen la cuota gratuita de Gemini. Por cliente (en la demo, cada
 // visitante es un cliente) y un tope global para todo el servicio.
 const LIMITE_CLIENTE_POR_HORA = 30
